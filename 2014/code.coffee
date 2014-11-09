@@ -1,20 +1,20 @@
 class Code
     constructor: ->
-        wrapper = document.querySelector("#wrapper")
+        @root = document.querySelector("#wrapper")
         canvas  = document.createElement("canvas")
         cwords  = "Your browser is bad and you should feel bad"
         ctext   = document.createTextNode cwords
         
-        wrapper.appendChild(canvas).appendChild(ctext)
+        @root.appendChild(canvas).appendChild(ctext)
             
         @canvas = canvas
         @ctx    = @canvas.getContext("2d")
         
-        @dimensions(wrapper)
+        @dimensions(@root)
         
         self = @
         window.addEventListener "resize", (e) ->
-            self.dimensions(wrapper)
+            self.dimensions(self.root)
         
     dimensions: (root) ->
         w = root.offsetWidth
@@ -63,13 +63,13 @@ darkness = new Box(0, 0, code.canvas.width,
                 code.canvas.height, new Color(0,0,0,0.5))
 mob1 = new Mob(code.unit * 0.5, sy)
 player = new Player(code.unit * 2, sy)
-physics = new Physics(code, level, player, darkness)
+end = new End(code.root, code.canvas, code.ctx)
+physics = new Physics(code, level, player, darkness, end)
 
 physics.addMobs(mob1)
 
 update = ->
     physics.update()
-    # boxes.map (box) -> box.update(code.unit, code.canvas)
 
 render = ->
     physics.render()

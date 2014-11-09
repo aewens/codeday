@@ -4,7 +4,7 @@
     __slice = [].slice;
 
   Physics = (function() {
-    function Physics(code, level, you, darkness) {
+    function Physics(code, level, you, darkness, end) {
       if (M(code, you).all()) {
         this.universe = code.canvas;
         this.world = code.ctx;
@@ -13,6 +13,7 @@
         this.keys = code.keyState;
         this.you = you;
         this.darkness = darkness;
+        this.end = end;
         this.objects = [];
         this.mobs = [];
         this.blocks = level.blocks;
@@ -43,53 +44,61 @@
       }
     };
 
-    Physics.prototype.update = function() {
+    Physics.prototype.update = function(game) {
       var b, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
-      prev = new Vector2(this.you.x, this.you.y);
-      if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
-        this.gravity(this.you);
-      }
-      _ref = this.mobs;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        mob = _ref[_i];
-        mob.prev = new Vector2(mob.x, mob.y);
-        if (!(mob.ground && !mob.falling)) {
-          this.gravity(mob);
+      if (this.you.dead) {
+        this.end.update(game);
+      } else {
+        prev = new Vector2(this.you.x, this.you.y);
+        if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
+          this.gravity(this.you);
         }
-        mob.update(this.you, this.unit, this.world);
-      }
-      this.you.update(this.keys, this.unit, this.universe);
-      _ref1 = this.blocks;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        b = _ref1[_j];
-        _ref2 = this.mobs;
-        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-          mob = _ref2[_k];
-          _ref3 = mob.collide(b), mx = _ref3[0], my = _ref3[1];
-          if (mx) {
-            mob.x = mob.prev.x;
+        _ref = this.mobs;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          mob = _ref[_i];
+          mob.prev = new Vector2(mob.x, mob.y);
+          if (!(mob.ground && !mob.falling)) {
+            this.gravity(mob);
           }
-          if (my) {
-            mob.y = mob.prev.y;
-            mob.ground = true;
-            mob.falling = false;
+          mob.update(this.you, this.unit, this.world);
+        }
+        this.you.update(this.keys, this.unit, this.universe);
+        _ref1 = this.blocks;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          b = _ref1[_j];
+          _ref2 = this.mobs;
+          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+            mob = _ref2[_k];
+            _ref3 = mob.collide(b), mx = _ref3[0], my = _ref3[1];
+            if (mx) {
+              mob.x = mob.prev.x;
+            }
+            if (my) {
+              mob.y = mob.prev.y;
+              mob.ground = true;
+              mob.falling = false;
+            }
+          }
+          _ref4 = this.you.collide(b), px = _ref4[0], py = _ref4[1];
+          if (px) {
+            this.you.x = prev.x;
+          }
+          if (py) {
+            this.you.y = prev.y;
+            this.you.ground = true;
+            this.you.falling = false;
           }
         }
-        _ref4 = this.you.collide(b), px = _ref4[0], py = _ref4[1];
-        if (px) {
-          this.you.x = prev.x;
-        }
-        if (py) {
-          this.you.y = prev.y;
-          this.you.ground = true;
-          this.you.falling = false;
-        }
+        return this.you.light.update(this.you.x, this.you.y);
       }
-      return this.you.light.update(this.you.x, this.you.y);
     };
 
     Physics.prototype.render = function() {
       var self;
+      if (this.you.dead) {
+        this.end.render();
+        return;
+      }
       self = this;
       this.world.clearRect(0, 0, this.universe.width, this.universe.height);
       this.level.render(this.world, this.unit);
