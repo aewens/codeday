@@ -1,1 +1,0 @@
-window.id = (x) -> x

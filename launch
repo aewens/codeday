@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-jade -wP index.jade & coffee -wc . && fg
