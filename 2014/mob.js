@@ -7,8 +7,10 @@
   Mob = (function(_super) {
     __extends(Mob, _super);
 
-    function Mob(x, y) {
-      Mob.__super__.constructor.call(this, x, y, 50, 50, new Color(0, 0, 0));
+    function Mob(x, y, unit) {
+      var scale;
+      scale = unit * (3 / 4);
+      Mob.__super__.constructor.call(this, x, y, scale, scale, new Color(0, 0, 0));
       this.ground = false;
       this.falling = true;
       this.clock = 0;
@@ -36,7 +38,8 @@
         this.canHit = false;
       }
       if (this.go) {
-        this.move(this.dir * (unit / 20), 0);
+        this.move(this.dir * (unit / 10), 0);
+        this.falling = true;
       }
       if (this.x < 0) {
         this.x = 0;

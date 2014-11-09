@@ -1,6 +1,7 @@
 class Mob extends Box
-    constructor: (x, y) ->
-        super x, y, 50, 50, new Color(0, 0, 0)
+    constructor: (x, y, unit) ->
+        scale = unit * (3/4)
+        super x, y, scale, scale, new Color(0, 0, 0)
         @ground = false
         @falling = true
         @clock = 0
@@ -8,7 +9,6 @@ class Mob extends Box
         @dir = 0
         @canHit = false
         
-    # pick: -> @dir = floor(random() * 3) - 1
     pick: -> @dir = round(random()) * 2 - 1
     
     hurt: (player) ->
@@ -23,7 +23,9 @@ class Mob extends Box
             @pick()
             @canHit = false
         
-        if @go then @move(@dir * (unit / 20), 0)
+        if @go
+            @move(@dir * (unit / 10), 0)
+            @falling = true
         
         if @x < 0 then @x = 0
         if @y < 0 then @y = 0

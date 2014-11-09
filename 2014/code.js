@@ -21,14 +21,16 @@
 
     Code.prototype.dimensions = function(root) {
       var h, m0, m1, r0, r1, r2, w, x, y;
-      w = root.offsetWidth;
-      h = root.offsetHeight;
-      r0 = 16;
+      w = parseInt(window.getComputedStyle(root).width);
+      h = parseInt(window.getComputedStyle(root).height);
+      console.log(w);
+      r0 = 32;
       r1 = 9;
       r2 = r0 * r1;
-      x = min(w, h);
-      y = min(r0, r1);
-      this.unit = pow(2, floor(log(floor(x / y)) / log(2)));
+      x = max(w, h);
+      y = max(r0, r1);
+      this.unit = floor(x / y);
+      console.log(this.unit);
       this.canvas.width = this.unit * r0;
       this.canvas.height = this.unit * r1;
       m0 = (h - this.canvas.height) / 2;
@@ -72,13 +74,13 @@
 
   sy = code.canvas.height - code.unit * 2;
 
-  level = new Level(TestLevel, code.unit);
+  level = new Level(Level0, code.unit);
 
   darkness = new Box(0, 0, code.canvas.width, code.canvas.height, new Color(0, 0, 0, 0.5));
 
-  mob1 = new Mob(code.unit * 0.5, sy);
+  mob1 = new Mob(code.unit * 0.5, sy, code.unit);
 
-  player = new Player(code.unit * 2, sy);
+  player = new Player(code.unit * 2, sy, code.unit);
 
   end = new End(code.root, code.canvas, code.ctx);
 

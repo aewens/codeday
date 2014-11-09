@@ -7,8 +7,10 @@
   Player = (function(_super) {
     __extends(Player, _super);
 
-    function Player(x, y) {
-      Player.__super__.constructor.call(this, x, y, 50, 50, new Color(210, 50, 50));
+    function Player(x, y, unit) {
+      var scale;
+      scale = unit * (3 / 4);
+      Player.__super__.constructor.call(this, x, y, scale, scale, new Color(210, 50, 50));
       this.ground = false;
       this.jumping = false;
       this.falling = true;
@@ -37,11 +39,11 @@
           this.move(unit / 20, 0);
         }
         if (this.jumping === false || this.jy === void 0) {
-          this.jy = this.y - (unit * 1.5);
+          this.jy = this.y - (unit * 3);
         }
         this.ground = false;
         this.jumping = true;
-        this.move(0, -(unit / 8));
+        this.move(0, -(unit / 16));
         if (this.y <= this.jy) {
           this.jumping = false;
           this.falling = true;
