@@ -7,12 +7,14 @@
   Mob = (function(_super) {
     __extends(Mob, _super);
 
-    function Mob(x, y, unit) {
+    function Mob(x, y, unit, dmg) {
       var scale;
       scale = unit * (3 / 4);
       Mob.__super__.constructor.call(this, x, y, scale, scale, new Color(0, 0, 0));
+      this.dmg = M(dmg).otherwise(1);
       this.ground = false;
       this.falling = true;
+      this.sleeping = false;
       this.clock = 0;
       this.go = false;
       this.dir = 0;
@@ -25,9 +27,13 @@
 
     Mob.prototype.hurt = function(player) {
       if (this.strike(player)) {
-        player.damage(1);
+        player.damage(this.dmg);
         return this.canHit = true;
       }
+    };
+
+    Mob.prototype.sleep = function() {
+      return this.color = new Color(180, 30, 30);
     };
 
     Mob.prototype.update = function(player, unit, canvas) {

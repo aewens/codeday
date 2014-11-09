@@ -3,12 +3,14 @@
   var Box;
 
   Box = (function() {
-    function Box(x, y, w, h, color) {
+    function Box(x, y, w, h, color, solid, win) {
       var _ref;
       _ref = M(x, y, w, h).diverge([0, 0, 0, 0]), this.x = _ref[0], this.y = _ref[1], this.w = _ref[2], this.h = _ref[3];
       this.color = M(color).otherwise({
         value: "#000"
       });
+      this.solid = M(solid).otherwise(1);
+      this.win = M(win).otherwise(0);
     }
 
     Box.prototype.move = function(dx, dy) {
@@ -34,7 +36,11 @@
     };
 
     Box.prototype.collide = function(obj) {
-      var a, b, c, d, floor, m, m1, m2, m3, n, o, p;
+      var a, b, c, d, floor, ignore, m, m1, m2, m3, n, o, p;
+      ignore = false;
+      if (obj.solid === 0) {
+        ignore = true;
+      }
       a = this.contains(obj.x, obj.y);
       b = this.contains(obj.x + obj.w, obj.y);
       c = this.contains(obj.x, obj.y + obj.h);
@@ -48,7 +54,7 @@
       m3 = M(a, b, o, p);
       this.hit = m1.elser(m2.elser(false));
       floor = m3.elser(false);
-      return [this.hit, floor];
+      return [ignore, this.hit, floor];
     };
 
     Box.prototype.contains = function(x, y) {

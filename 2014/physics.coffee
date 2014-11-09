@@ -12,7 +12,7 @@ class Physics
             @objects = []
             @mobs = []
             @blocks = level.blocks
-            @last = false
+            @win = false
             @add(@blocks)
         else throw new TypeError("There is nothing. You are nothing.")
     addMobs: (xs...) -> 
@@ -23,9 +23,10 @@ class Physics
         obj.y = obj.y + (@unit / 16)
         obj.light.y = obj.light.y + (@unit / 16) if M(obj.light).bool()
     update: (game) ->
-        # if @you.dead 
-        #     @end.update(game)
-        #     return
+        if @you.dead 
+            @end.update(game)
+            return
+        if @win then return
         prev = new Vector2(@you.x, @you.y)
         unless (@you.ground or @you.jumping) and !@you.falling
             @gravity(@you)
@@ -36,29 +37,41 @@ class Physics
         @you.update(@keys, @unit, @universe)
         for b in @blocks
             for mob in @mobs
-                [mx, my] = mob.collide(b)
-                if mx then mob.x = mob.prev.x
+                [ign, mx, my] = mob.collide(b)
+                if mx 
+                    unless ign
+                        mob.x = mob.prev.x
                 if my
-                    mob.y = mob.prev.y
-                    mob.ground = true
-                    mob.falling = false
-            [px, py] = @you.collide(b)
-            if px then @you.x = prev.x
+                    unless ign
+                        mob.y = mob.prev.y
+                        mob.ground = true
+                        mob.falling = false
+            [ign, px, py] = @you.collide(b)
+            if px
+                unless ign
+                    @you.x = prev.x
+                    @you.falling = true
+                    @you.jumping = false
             if py
-                @you.y = prev.y
-                @you.ground = true
-                @you.falling = false
+                if b.win
+                    console.log "You win!"
+                    @win = true
+                unless ign
+                    @you.y = prev.y
+                    @you.ground = true
+                    @you.falling = false
         @you.light.update(@you.x, @you.y)
     render: ->
-        # if @you.dead 
-        #     @end.render()
-        #     return
+        if @you.dead 
+            @end.render()
+            return
+        if @win then return
         self = @
         @world.clearRect(0, 0, @universe.width, @universe.height)
         @level.render(@world, @unit)
         @darkness.render(@world)
+        @objects.map (obj) -> obj.render(self.world)
         @you.render(@world)
         @you.light.render(@world, @unit)
-        @objects.map (obj) -> obj.render(self.world)
         
 window.Physics = Physics

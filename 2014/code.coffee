@@ -17,11 +17,8 @@ class Code
             self.dimensions(self.root)
         
     dimensions: (root) ->
-        # w = root.offsetWidth
-        # h = root.offsetHeight
         w = parseInt window.getComputedStyle(root).width
         h = parseInt window.getComputedStyle(root).height
-        console.log w
         r0 = 32
         r1 = 9
         r2 = r0 * r1
@@ -31,8 +28,6 @@ class Code
 
         # @unit = pow(2,((floor(log(floor(x/y))/log(2)))))
         @unit = floor(x/y)
-        
-        console.log @unit
         
         @canvas.width  = @unit * r0
         @canvas.height = @unit * r1
@@ -67,7 +62,7 @@ sy = code.canvas.height - code.unit * 2
 level = new Level(Level0, code.unit)
 darkness = new Box(0, 0, code.canvas.width, 
                 code.canvas.height, new Color(0,0,0,0.5))
-mob1 = new Mob(code.unit * 0.5, sy, code.unit)
+mob1 = new Mob(code.unit * 17, sy, code.unit)
 player = new Player(code.unit * 2, sy, code.unit)
 end = new End(code.root, code.canvas, code.ctx)
 physics = new Physics(code, level, player, darkness, end)

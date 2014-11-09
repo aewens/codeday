@@ -1,7 +1,9 @@
 class Box
-    constructor: (x, y, w, h, color) ->
+    constructor: (x, y, w, h, color, solid, win) ->
         [@x, @y, @w, @h] = M(x, y, w, h).diverge([0,0,0,0])
         @color = M(color).otherwise({value: "#000"})
+        @solid = M(solid).otherwise(1)
+        @win = M(win).otherwise(0)
         
     move: (dx, dy) ->
         @x = @x + dx
@@ -25,6 +27,11 @@ class Box
         return @hit
         
     collide: (obj) ->
+        ignore = false
+        # if @solid is 0 or obj.solid is 0
+        #     @hit = false
+        #     return [@hit, false]
+        if obj.solid is 0 then ignore = true
         a = @contains(obj.x, obj.y)
         b = @contains(obj.x + obj.w, obj.y)
         c = @contains(obj.x, obj.y + obj.h)
@@ -43,7 +50,7 @@ class Box
         @hit = m1.elser(m2.elser(false))
         floor = m3.elser(false)
         
-        return [@hit, floor]
+        return [ignore, @hit, floor]
         
     contains: (x, y) ->
         if x >= @x and x <= @x + @w and y >= @y and y <= @y + @h

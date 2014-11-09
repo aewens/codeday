@@ -17,7 +17,7 @@
         this.objects = [];
         this.mobs = [];
         this.blocks = level.blocks;
-        this.last = false;
+        this.win = false;
         this.add(this.blocks);
       } else {
         throw new TypeError("There is nothing. You are nothing.");
@@ -45,7 +45,14 @@
     };
 
     Physics.prototype.update = function(game) {
-      var b, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
+      var b, ign, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
+      if (this.you.dead) {
+        this.end.update(game);
+        return;
+      }
+      if (this.win) {
+        return;
+      }
       prev = new Vector2(this.you.x, this.you.y);
       if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
         this.gravity(this.you);
@@ -66,24 +73,38 @@
         _ref2 = this.mobs;
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           mob = _ref2[_k];
-          _ref3 = mob.collide(b), mx = _ref3[0], my = _ref3[1];
+          _ref3 = mob.collide(b), ign = _ref3[0], mx = _ref3[1], my = _ref3[2];
           if (mx) {
-            mob.x = mob.prev.x;
+            if (!ign) {
+              mob.x = mob.prev.x;
+            }
           }
           if (my) {
-            mob.y = mob.prev.y;
-            mob.ground = true;
-            mob.falling = false;
+            if (!ign) {
+              mob.y = mob.prev.y;
+              mob.ground = true;
+              mob.falling = false;
+            }
           }
         }
-        _ref4 = this.you.collide(b), px = _ref4[0], py = _ref4[1];
+        _ref4 = this.you.collide(b), ign = _ref4[0], px = _ref4[1], py = _ref4[2];
         if (px) {
-          this.you.x = prev.x;
+          if (!ign) {
+            this.you.x = prev.x;
+            this.you.falling = true;
+            this.you.jumping = false;
+          }
         }
         if (py) {
-          this.you.y = prev.y;
-          this.you.ground = true;
-          this.you.falling = false;
+          if (b.win) {
+            console.log("You win!");
+            this.win = true;
+          }
+          if (!ign) {
+            this.you.y = prev.y;
+            this.you.ground = true;
+            this.you.falling = false;
+          }
         }
       }
       return this.you.light.update(this.you.x, this.you.y);
@@ -91,15 +112,22 @@
 
     Physics.prototype.render = function() {
       var self;
+      if (this.you.dead) {
+        this.end.render();
+        return;
+      }
+      if (this.win) {
+        return;
+      }
       self = this;
       this.world.clearRect(0, 0, this.universe.width, this.universe.height);
       this.level.render(this.world, this.unit);
       this.darkness.render(this.world);
-      this.you.render(this.world);
-      this.you.light.render(this.world, this.unit);
-      return this.objects.map(function(obj) {
+      this.objects.map(function(obj) {
         return obj.render(self.world);
       });
+      this.you.render(this.world);
+      return this.you.light.render(this.world, this.unit);
     };
 
     return Physics;

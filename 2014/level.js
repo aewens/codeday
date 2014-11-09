@@ -4,9 +4,11 @@
 
   Level = (function() {
     function Level(level, unit) {
-      var color, o, one, self, x, y, _i, _ref, _ref1;
+      var color, o, one, self, solid, win, x, y, _i, _ref, _ref1;
       one = level.points;
       this.types = level.types;
+      this.solid = level.solid;
+      this.win = level.win;
       this.three = [[]];
       this.unit = unit;
       this.w = one[0];
@@ -16,13 +18,15 @@
       self = this;
       for (o = _i = 0, _ref = this.one.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; o = 0 <= _ref ? ++_i : --_i) {
         color = this.types[this.one[o] + 1];
+        solid = this.solid[this.one[o] + 1];
+        win = this.win[this.one[o] + 1];
         if (color === null) {
           continue;
         }
         _ref1 = this.xy(o).map(function(i) {
           return i * self.unit;
         }), x = _ref1[0], y = _ref1[1];
-        this.blocks.push(new Box(x, y, this.unit, this.unit, color));
+        this.blocks.push(new Box(x, y, this.unit, this.unit, color, solid, win));
       }
     }
 

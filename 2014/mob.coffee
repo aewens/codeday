@@ -1,9 +1,11 @@
 class Mob extends Box
-    constructor: (x, y, unit) ->
+    constructor: (x, y, unit, dmg) ->
         scale = unit * (3/4)
         super x, y, scale, scale, new Color(0, 0, 0)
+        @dmg = M(dmg).otherwise(1)
         @ground = false
         @falling = true
+        @sleeping = false
         @clock = 0
         @go = false
         @dir = 0
@@ -13,8 +15,12 @@ class Mob extends Box
     
     hurt: (player) ->
         if @strike(player)
-            player.damage(1)
+            player.damage(@dmg)
             @canHit = true
+            
+    sleep: ->
+        @color = new Color(180, 30, 30)
+        
         
     update: (player, unit, canvas) ->
         @clock = (@clock + 1) % 100
