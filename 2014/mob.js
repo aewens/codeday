@@ -8,7 +8,7 @@
     __extends(Mob, _super);
 
     function Mob(x, y) {
-      Mob.__super__.constructor.call(this, x, y, 50, 50, new Color(0, 100, 50));
+      Mob.__super__.constructor.call(this, x, y, 50, 50, new Color(0, 0, 0));
       this.ground = false;
       this.falling = true;
     }

@@ -1,6 +1,6 @@
 class Player extends Box
     constructor: (x, y) ->
-        super x, y, 50, 50, new Color(210, 13, 50)
+        super x, y, 50, 50, new Color(210, 50, 50)
         @ground = false
         @jumping = false
         @falling = true

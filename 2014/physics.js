@@ -4,7 +4,7 @@
     __slice = [].slice;
 
   Physics = (function() {
-    function Physics(code, level, you) {
+    function Physics(code, level, you, darkness, light) {
       if (M(code, you).all()) {
         this.universe = code.canvas;
         this.world = code.ctx;
@@ -12,6 +12,8 @@
         this.unit = code.unit;
         this.keys = code.keyState;
         this.you = you;
+        this.darkness = darkness;
+        this.light = light;
         this.objects = [];
         this.mobs = [];
         this.blocks = level.blocks;
@@ -55,6 +57,7 @@
         mob.update(this.you, this.unit, this.world);
       }
       this.you.update(this.keys, this.unit, this.world);
+      this.light.update(this.you);
       _ref1 = this.blocks;
       _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -88,7 +91,9 @@
       self = this;
       this.world.clearRect(0, 0, this.universe.width, this.universe.height);
       this.level.render(this.world, this.unit);
+      this.darkness.render(this.world);
       this.you.render(this.world);
+      this.light.render(this.world);
       return this.objects.map(function(obj) {
         return obj.render(self.world);
       });

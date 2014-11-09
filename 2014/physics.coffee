@@ -1,5 +1,5 @@
 class Physics
-    constructor: (code, level, you) ->
+    constructor: (code, level, you, darkness, light) ->
         if M(code,you).all()
             @universe = code.canvas
             @world = code.ctx
@@ -7,6 +7,8 @@ class Physics
             @unit = code.unit
             @keys = code.keyState
             @you = you
+            @darkness = darkness
+            @light = light
             @objects = []
             @mobs = []
             @blocks = level.blocks
@@ -26,6 +28,7 @@ class Physics
             @gravity(mob, 1) unless mob.ground and !mob.falling
             mob.update(@you, @unit, @world)
         @you.update(@keys, @unit, @world)
+        @light.update(@you)
         for b in @blocks
             for mob in @mobs
                 if mob.collide(b)[1]
@@ -44,7 +47,9 @@ class Physics
         self = @
         @world.clearRect(0, 0, @universe.width, @universe.height)
         @level.render(@world, @unit)
+        @darkness.render(@world)
         @you.render(@world)
+        @light.render(@world)
         @objects.map (obj) -> obj.render(self.world)
         
 window.Physics = Physics

@@ -8,7 +8,7 @@
     __extends(Player, _super);
 
     function Player(x, y) {
-      Player.__super__.constructor.call(this, x, y, 50, 50, new Color(210, 13, 50));
+      Player.__super__.constructor.call(this, x, y, 50, 50, new Color(210, 50, 50));
       this.ground = false;
       this.jumping = false;
       this.falling = true;

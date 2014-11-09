@@ -1,6 +1,6 @@
 class Mob extends Box
     constructor: (x, y) ->
-        super x, y, 50, 50, new Color(0, 100, 50)
+        super x, y, 50, 50, new Color(0, 0, 0)
         @ground = false
         @falling = true
         
