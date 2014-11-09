@@ -15,7 +15,7 @@
       this.jumping = false;
       this.falling = true;
       this.dead = false;
-      this.hp = 3;
+      this.hp = 1;
       this.light = new Light(this);
     }
 
@@ -67,7 +67,10 @@
         this.jumping = false;
       }
       if (this.x + this.w > canvas.width) {
-        return this.x = canvas.width - this.w;
+        this.x = canvas.width - this.w;
+      }
+      if (this.y + this.h > canvas.height) {
+        return this.dead = true;
       }
     };
 

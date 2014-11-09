@@ -6,7 +6,7 @@ class Player extends Box
         @jumping = false
         @falling = true
         @dead = false
-        @hp = 3
+        @hp = 1
         @light = new Light(@)
         
     damage: (dmg) -> @hp = @hp - dmg
@@ -41,7 +41,7 @@ class Player extends Box
             @falling = true
             @jumping = false
         if @x + @w > canvas.width then @x = canvas.width - @w
-        # if @y + @h > canvas.height then @y = canvas.height - @h
+        if @y + @h > canvas.height then @dead = true
         # you know, so you can fall off the world and die
 
 window.Player = Player

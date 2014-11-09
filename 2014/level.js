@@ -6,7 +6,7 @@
     function Level(level, unit) {
       var color, o, one, self, solid, win, x, y, _i, _ref, _ref1;
       one = level.points;
-      this.types = level.types;
+      this.color = level.color;
       this.solid = level.solid;
       this.win = level.win;
       this.three = [[]];
@@ -17,7 +17,7 @@
       this.blocks = [];
       self = this;
       for (o = _i = 0, _ref = this.one.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; o = 0 <= _ref ? ++_i : --_i) {
-        color = this.types[this.one[o] + 1];
+        color = this.color[this.one[o] + 1];
         solid = this.solid[this.one[o] + 1];
         win = this.win[this.one[o] + 1];
         if (color === null) {

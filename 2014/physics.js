@@ -4,7 +4,7 @@
     __slice = [].slice;
 
   Physics = (function() {
-    function Physics(code, level, you, darkness, end) {
+    function Physics(code, level, you, darkness, evpg) {
       if (M(code, you).all()) {
         this.universe = code.canvas;
         this.world = code.ctx;
@@ -13,7 +13,7 @@
         this.keys = code.keyState;
         this.you = you;
         this.darkness = darkness;
-        this.end = end;
+        this.evpg = evpg;
         this.objects = [];
         this.mobs = [];
         this.blocks = level.blocks;
@@ -47,10 +47,17 @@
     Physics.prototype.update = function(game) {
       var b, ign, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
       if (this.you.dead) {
-        this.end.update(game);
+        if (!M(this.evpg.text).bool()) {
+          this.evpg.set("end");
+        }
+        this.evpg.update();
         return;
       }
       if (this.win) {
+        if (!M(this.evpg.text).bool()) {
+          this.evpg.set("win");
+        }
+        this.evpg.update();
         return;
       }
       prev = new Vector2(this.you.x, this.you.y);
@@ -113,10 +120,17 @@
     Physics.prototype.render = function() {
       var self;
       if (this.you.dead) {
-        this.end.render();
+        if (!M(this.evpg.text).bool()) {
+          this.evpg.set("end");
+        }
+        this.evpg.render();
         return;
       }
       if (this.win) {
+        if (!M(this.evpg.text).bool()) {
+          this.evpg.set("win");
+        }
+        this.evpg.render();
         return;
       }
       self = this;

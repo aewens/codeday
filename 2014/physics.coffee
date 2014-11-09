@@ -1,5 +1,5 @@
 class Physics
-    constructor: (code, level, you, darkness, end) ->
+    constructor: (code, level, you, darkness, evpg) ->
         if M(code,you).all()
             @universe = code.canvas
             @world = code.ctx
@@ -8,7 +8,7 @@ class Physics
             @keys = code.keyState
             @you = you
             @darkness = darkness
-            @end = end
+            @evpg = evpg
             @objects = []
             @mobs = []
             @blocks = level.blocks
@@ -23,10 +23,14 @@ class Physics
         obj.y = obj.y + (@unit / 16)
         obj.light.y = obj.light.y + (@unit / 16) if M(obj.light).bool()
     update: (game) ->
-        if @you.dead 
-            @end.update(game)
+        if @you.dead
+            @evpg.set("end") unless M(@evpg.text).bool()
+            @evpg.update()
             return
-        if @win then return
+        if @win
+            @evpg.set("win") unless M(@evpg.text).bool()
+            @evpg.update()
+            return
         prev = new Vector2(@you.x, @you.y)
         unless (@you.ground or @you.jumping) and !@you.falling
             @gravity(@you)
@@ -62,10 +66,14 @@ class Physics
                     @you.falling = false
         @you.light.update(@you.x, @you.y)
     render: ->
-        if @you.dead 
-            @end.render()
+        if @you.dead
+            @evpg.set("end") unless M(@evpg.text).bool()
+            @evpg.render()
             return
-        if @win then return
+        if @win
+            @evpg.set("win") unless M(@evpg.text).bool()
+            @evpg.render()
+            return
         self = @
         @world.clearRect(0, 0, @universe.width, @universe.height)
         @level.render(@world, @unit)

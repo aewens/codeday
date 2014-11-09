@@ -1,7 +1,7 @@
 class Level
     constructor: (level, unit) ->
         one = level.points
-        @types = level.types
+        @color = level.color
         @solid = level.solid
         @win = level.win
         @three = [[]]
@@ -19,7 +19,7 @@ class Level
         @blocks = []
         self = @
         for o in [0..@one.length-1]
-            color = @types[@one[o]+1]
+            color = @color[@one[o]+1]
             solid = @solid[@one[o]+1]
             win = @win[@one[o]+1]
             if color is null then continue

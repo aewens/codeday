@@ -64,8 +64,8 @@ darkness = new Box(0, 0, code.canvas.width,
                 code.canvas.height, new Color(0,0,0,0.5))
 mob1 = new Mob(code.unit * 17, sy, code.unit)
 player = new Player(code.unit * 2, sy, code.unit)
-end = new End(code.root, code.canvas, code.ctx)
-physics = new Physics(code, level, player, darkness, end)
+evpg = new EventPage(code)
+physics = new Physics(code, level, player, darkness, evpg)
 
 physics.addMobs(mob1)
 
