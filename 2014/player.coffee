@@ -4,6 +4,7 @@ class Player extends Box
         @ground = false
         @jumping = false
         @falling = true
+        @dead = false
         @light = new Light(@)
         
     update: (key, unit, canvas) ->
@@ -26,9 +27,10 @@ class Player extends Box
                 @falling = true
         
         # World
-        if @x < 0 then @x = 0
-        if @y < 0 then @y = 0
+        if @x <= 0 then @x = 0
+        if @y <= 0 then @y = 0
         if @x + @w > canvas.width  then @x = canvas.width  - @w
-        if @y + @h > canvas.height then @y = canvas.height - @h
+        # if @y + @h > canvas.height then @y = canvas.height - @h
+        # you know, so you can fall off the world and die
 
 window.Player = Player

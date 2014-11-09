@@ -28,7 +28,7 @@ class Physics
             mob.prev = new Vector2(mob.x, mob.y)
             @gravity(mob) unless mob.ground and !mob.falling
             mob.update(@you, @unit, @world)
-        @you.update(@keys, @unit, @world)
+        @you.update(@keys, @unit, @universe)
         for b in @blocks
             for mob in @mobs
                 if mob.collide(b)[1]

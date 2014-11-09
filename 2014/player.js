@@ -12,6 +12,7 @@
       this.ground = false;
       this.jumping = false;
       this.falling = true;
+      this.dead = false;
       this.light = new Light(this);
     }
 
@@ -43,17 +44,14 @@
           this.falling = true;
         }
       }
-      if (this.x < 0) {
+      if (this.x <= 0) {
         this.x = 0;
       }
-      if (this.y < 0) {
+      if (this.y <= 0) {
         this.y = 0;
       }
       if (this.x + this.w > canvas.width) {
-        this.x = canvas.width - this.w;
-      }
-      if (this.y + this.h > canvas.height) {
-        return this.y = canvas.height - this.h;
+        return this.x = canvas.width - this.w;
       }
     };
 

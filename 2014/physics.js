@@ -58,7 +58,7 @@
         }
         mob.update(this.you, this.unit, this.world);
       }
-      this.you.update(this.keys, this.unit, this.world);
+      this.you.update(this.keys, this.unit, this.universe);
       _ref1 = this.blocks;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         b = _ref1[_j];
