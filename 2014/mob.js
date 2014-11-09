@@ -19,6 +19,7 @@
       this.go = false;
       this.dir = 0;
       this.canHit = false;
+      this.sleepTime = 1;
     }
 
     Mob.prototype.pick = function() {
@@ -33,15 +34,27 @@
     };
 
     Mob.prototype.sleep = function() {
-      return this.color = new Color(180, 30, 30);
+      this.color = new Color(180, 30, 30);
+      return this.sleeping = true;
+    };
+
+    Mob.prototype.wake = function() {
+      this.color = new Color(0, 0, 0);
+      return this.sleeping = true;
     };
 
     Mob.prototype.update = function(player, unit, canvas) {
       this.clock = (this.clock + 1) % 100;
+      if (this.sleeping) {
+        this.sleepTime = (this.sleepTime + 1) % 500;
+      }
       if (this.clock === 0) {
         this.go = !this.go;
         this.pick();
         this.canHit = false;
+      }
+      if (this.sleepTime === 0) {
+        this.wake();
       }
       if (this.go) {
         this.move(this.dir * (unit / 10), 0);
@@ -56,7 +69,7 @@
       if (this.x + this.w > canvas.width) {
         this.x = canvas.width - this.w;
       }
-      if (!this.canHit) {
+      if (!(this.canHit || this.sleeping)) {
         return this.hurt(player);
       }
     };

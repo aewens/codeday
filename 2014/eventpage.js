@@ -4,14 +4,17 @@
 
   EventPage = (function() {
     function EventPage(code, ev) {
+      this.code = code;
       this.root = code.root;
       this.canvas = code.canvas;
       this.ctx = code.ctx;
       this.once = false;
       this.reset = false;
+      this.run = false;
       this.events = {
         "end": "Game Over",
-        "win": "You Win!"
+        "win": "You Win!",
+        "done": "You got the sun, you win the game!"
       };
     }
 
@@ -21,17 +24,30 @@
       return console.log(this.text);
     };
 
+    EventPage.prototype.done = function() {
+      this.set("done");
+      this.update();
+      return this.render();
+    };
+
     EventPage.prototype.update = function() {
-      var epDiv, epText;
+      var epDiv, epText, self;
       if (!this.once) {
         epDiv = document.createElement("div");
         epDiv.id = "evpg";
         epText = document.createTextNode(this.text);
         this.root.appendChild(epDiv).appendChild(epText);
         this.once = true;
+        self = this;
         return document.addEventListener("click", function(e) {
-          if (this.event === "end") {
-            return window.location.reload(true);
+          var level;
+          if (self.event === "end" || self.event === "done") {
+            window.location.replace(window.location.pathname);
+          }
+          if (self.event === "win") {
+            epDiv.remove();
+            level = self.code.nextLevel();
+            return self.code.resetLevel();
           }
         });
       }

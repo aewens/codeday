@@ -10,6 +10,7 @@ class Mob extends Box
         @go = false
         @dir = 0
         @canHit = false
+        @sleepTime = 1
         
     pick: -> @dir = round(random()) * 2 - 1
     
@@ -20,14 +21,21 @@ class Mob extends Box
             
     sleep: ->
         @color = new Color(180, 30, 30)
+        @sleeping = true
         
+    wake: ->
+        @color = new Color(0, 0, 0)
+        @sleeping = true
         
     update: (player, unit, canvas) ->
         @clock = (@clock + 1) % 100
+        @sleepTime = (@sleepTime + 1) % 500 if @sleeping
         if @clock is 0
             @go = !@go 
             @pick()
             @canHit = false
+            
+        if @sleepTime is 0 then @wake()
         
         if @go
             @move(@dir * (unit / 10), 0)
@@ -35,9 +43,9 @@ class Mob extends Box
         
         if @x < 0 then @x = 0
         if @y < 0 then @y = 0
-        if @x + @w > canvas.width  then @x = canvas.width  - @w
+        if @x + @w > canvas.width then @x = canvas.width - @w
         # if @y + @h > canvas.height then @y = canvas.height - @h
         
-        @hurt(player) unless @canHit
+        @hurt(player) unless @canHit or @sleeping
 
 window.Mob = Mob

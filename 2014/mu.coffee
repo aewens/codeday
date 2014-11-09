@@ -26,9 +26,10 @@ Mu = (xs...) ->
 Mu.fn = Mu.prototype
 Mu.fn.of = (x, usable, array) -> 
     [@x, @usable, @array] = [x, usable, array]
+    @value = x
     @
 Mu.fn.isArray = (x) -> @array
-Mu.fn.into = (z) -> 
+Mu.fn.into = (z) ->
     if @isArray() then @x.map (x) -> z.push(x)
     else z.push(@x)
     return z

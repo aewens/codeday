@@ -10,11 +10,42 @@ class Code
         @canvas = canvas
         @ctx    = @canvas.getContext("2d")
         
+        @done = false
+        
         @dimensions(@root)
+        
+        @inputs()
+
+        @levelList = [Level0, Level1]
+        @levelIndex = 0
+        
+        @init()
         
         self = @
         window.addEventListener "resize", (e) ->
             self.dimensions(self.root)
+            
+    init: ->
+        @evpg = new EventPage(@)
+        if @done
+            @evpg.done()
+        else
+            sy = @unit #@canvas.height - 
+            @level = new Level(@currentLevel(), @unit)
+            if @levelIndex is 1 then @level.mobs = false
+            @darkness = new Box(0, 0, @canvas.width, 
+                            @canvas.height, new Color(0,0,0,0.5))
+            mob1 = new Mob(@unit * 14, sy, @unit) # - (@unit * round(random() * 10))
+            mob2 = new Mob(@unit * 18, sy, @unit) # - (@unit * round(random() * 10))
+            mob3 = new Mob(@unit * 20, sy, @unit) # - (@unit * round(random() * 10))
+            mob4 = new Mob(@unit * 24, sy, @unit) # - (@unit * round(random() * 10))
+            mob5 = new Mob(@unit * 30, sy, @unit) # - (@unit * round(random() * 10))
+            @player = new Player(@unit * 2, @canvas.height - (sy * 2), @unit)
+            @physics = new Physics(@, @level, @player, @darkness, @evpg)
+            
+            mobs = [mob1,mob2,mob3,mob4,mob5]
+
+            @physics.addMobs(mobs) if @level.mobs
         
     dimensions: (root) ->
         w = parseInt window.getComputedStyle(root).width
@@ -37,6 +68,13 @@ class Code
         
         @canvas.style.margin = "#{m0}px #{m1}px"
         
+    resetLevel: -> @init()
+    currentLevel: -> @levelList[@levelIndex]
+    nextLevel: ->
+        @levelIndex = @levelIndex + 1
+        if @levelIndex is @levelList.length then return @done = true
+        return @currentLevel()
+        
     inputs: ->
         @keyState = {}
         self = @
@@ -44,6 +82,8 @@ class Code
             self.keyState[e.keyCode] = true
         document.addEventListener "keyup", (e) -> 
             self.keyState[e.keyCode] = false
+        document.addEventListener "dblclick", (e) ->
+            self.physics.win = true
         
     animate: (update, render) ->
         self = @
@@ -55,46 +95,29 @@ class Code
         rf l, @canvas
         
 code = new Code()
-code.inputs()
-
-sy = code.canvas.height - code.unit * 2
-
-level = new Level(Level0, code.unit)
-darkness = new Box(0, 0, code.canvas.width, 
-                code.canvas.height, new Color(0,0,0,0.5))
-mob1 = new Mob(code.unit * 17, sy, code.unit)
-player = new Player(code.unit * 2, sy, code.unit)
-evpg = new EventPage(code)
-physics = new Physics(code, level, player, darkness, evpg)
-
-physics.addMobs(mob1)
 
 update = ->
-    physics.update()
+    if code.physics.you.dead
+        code.evpg.set("end") unless M(code.evpg.text).bool()
+        code.evpg.update()
+        return
+    if code.physics.win
+        code.evpg.set("win") unless M(code.evpg.text).bool()
+        code.evpg.update()
+        return
+    else code.physics.update()
 
 render = ->
-    physics.render()
+    if code.physics.you.dead
+        code.evpg.set("end") unless M(code.evpg.text).bool()
+        code.evpg.render()
+        return
+    if code.physics.win
+        code.evpg.set("win") unless M(code.evpg.text).bool()
+        code.evpg.render()
+        return
+    else code.physics.render()
 
 code.animate(update, render)
-
-# box1 = new Box(100,100,100,100, new Color(0, 100, 50))
-# box2 = new Box(250,100,100,100, new Color(120, 100, 50))
-# box3 = new Box(400,100,100,100, new Color(240, 100, 50))
-# move = 1
-# 
-# v0 = new Vector2(10,15)
-# v1 = new Vector2(4,5)
-# console.log v0.set(20,20)
-# console.log v0.dist()
-# 
-# code.animate ->
-#     code.ctx.clearRect(0, 0, code.canvas.width, code.canvas.height)
-#     box2.move(move, 0)
-#     if box2.intersects(box1) or box2.intersects(box3)
-#         move = -move
-#         box2.move(move, 0)
-#     box1.render(code.ctx, "#f00")
-#     box2.render(code.ctx, "#0f0")
-#     box3.render(code.ctx, "#00f")
 
 window.Code = Code

@@ -22,26 +22,22 @@ class Physics
     gravity: (obj) -> 
         obj.y = obj.y + (@unit / 16)
         obj.light.y = obj.light.y + (@unit / 16) if M(obj.light).bool()
-    update: (game) ->
-        if @you.dead
-            @evpg.set("end") unless M(@evpg.text).bool()
-            @evpg.update()
-            return
-        if @win
-            @evpg.set("win") unless M(@evpg.text).bool()
-            @evpg.update()
-            return
+    update: () ->
         prev = new Vector2(@you.x, @you.y)
         unless (@you.ground or @you.jumping) and !@you.falling
             @gravity(@you)
         for mob in @mobs
             mob.prev = new Vector2(mob.x, mob.y)
             @gravity(mob) unless mob.ground and !mob.falling
-            mob.update(@you, @unit, @world)
+            mob.update(@you, @unit, @universe)
         @you.update(@keys, @unit, @universe)
         for b in @blocks
             for mob in @mobs
+                mob.sleep() if @you.light.inside(mob)
                 [ign, mx, my] = mob.collide(b)
+                if mob.sleeping
+                    mob.x = mob.prev.x
+                    mob.y = mob.prev.y
                 if mx 
                     unless ign
                         mob.x = mob.prev.x
@@ -66,6 +62,9 @@ class Physics
                     @you.falling = false
         @you.light.update(@you.x, @you.y)
     render: ->
+        if M(@evpg.text).bool()
+            @evpg.render()
+            return
         if @you.dead
             @evpg.set("end") unless M(@evpg.text).bool()
             @evpg.render()
@@ -81,5 +80,10 @@ class Physics
         @objects.map (obj) -> obj.render(self.world)
         @you.render(@world)
         @you.light.render(@world, @unit)
+        
+        # Text
+        @world.fillStyle = new Color(0,0,0,0.5).value
+        @world.fillText("Monsters in the Dark :: #{@you.hp} HP", 10, 
+        @universe.height - 10)
         
 window.Physics = Physics

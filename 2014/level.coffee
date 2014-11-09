@@ -25,6 +25,7 @@ class Level
             if color is null then continue
             [x, y] = @xy(o).map (i) -> i * self.unit
             @blocks.push new Box(x, y, @unit, @unit, color, solid, win)
+    mobs: true
     point: (x, y) -> @one[x+y*@h]
     xy: (p) -> [(p%@w),floor(p/@w)]
     render: (ctx) ->

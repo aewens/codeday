@@ -35,6 +35,18 @@
       return this.hit;
     };
 
+    Box.prototype.inside = function(obj) {
+      var a, b, c, d, m1, offset;
+      offset = M(obj.radius).otherwise(0);
+      a = this.contains(obj.x - offset, obj.y - offset);
+      b = this.contains(obj.x + obj.w - offset, obj.y - offset);
+      c = this.contains(obj.x - offset, obj.y + obj.h - offset);
+      d = this.contains(obj.x + obj.w - offset, obj.y + obj.h - offset);
+      m1 = M(a, b, c, d);
+      this.hit = m1.elser(false);
+      return this.hit;
+    };
+
     Box.prototype.collide = function(obj) {
       var a, b, c, d, floor, ignore, m, m1, m2, m3, n, o, p;
       ignore = false;

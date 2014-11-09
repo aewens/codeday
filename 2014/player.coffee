@@ -7,6 +7,7 @@ class Player extends Box
         @falling = true
         @dead = false
         @hp = 1
+        @clock = 0
         @light = new Light(@)
         
     damage: (dmg) -> @hp = @hp - dmg
@@ -16,6 +17,10 @@ class Player extends Box
         if @hp < 1
             @dead = true
             console.log "Dead"
+        # @clock = (@clock + 1) % 100
+        # if @clock is 0
+        #     @light.darken()
+        #     @light.shrink()
         if (((key[87] or key[32]) and @ground) or @jumping) and !@falling
             if key[65] then @move(-(unit / 20),0)
             if key[68] then @move((unit / 20),0)

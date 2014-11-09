@@ -30,6 +30,8 @@
       }
     }
 
+    Level.prototype.mobs = true;
+
     Level.prototype.point = function(x, y) {
       return this.one[x + y * this.h];
     };

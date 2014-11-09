@@ -40,6 +40,7 @@
   Mu.fn.of = function(x, usable, array) {
     var _ref;
     _ref = [x, usable, array], this.x = _ref[0], this.usable = _ref[1], this.array = _ref[2];
+    this.value = x;
     return this;
   };
 

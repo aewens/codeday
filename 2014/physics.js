@@ -44,22 +44,8 @@
       }
     };
 
-    Physics.prototype.update = function(game) {
+    Physics.prototype.update = function() {
       var b, ign, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
-      if (this.you.dead) {
-        if (!M(this.evpg.text).bool()) {
-          this.evpg.set("end");
-        }
-        this.evpg.update();
-        return;
-      }
-      if (this.win) {
-        if (!M(this.evpg.text).bool()) {
-          this.evpg.set("win");
-        }
-        this.evpg.update();
-        return;
-      }
       prev = new Vector2(this.you.x, this.you.y);
       if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
         this.gravity(this.you);
@@ -71,7 +57,7 @@
         if (!(mob.ground && !mob.falling)) {
           this.gravity(mob);
         }
-        mob.update(this.you, this.unit, this.world);
+        mob.update(this.you, this.unit, this.universe);
       }
       this.you.update(this.keys, this.unit, this.universe);
       _ref1 = this.blocks;
@@ -80,7 +66,14 @@
         _ref2 = this.mobs;
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           mob = _ref2[_k];
+          if (this.you.light.inside(mob)) {
+            mob.sleep();
+          }
           _ref3 = mob.collide(b), ign = _ref3[0], mx = _ref3[1], my = _ref3[2];
+          if (mob.sleeping) {
+            mob.x = mob.prev.x;
+            mob.y = mob.prev.y;
+          }
           if (mx) {
             if (!ign) {
               mob.x = mob.prev.x;
@@ -119,6 +112,10 @@
 
     Physics.prototype.render = function() {
       var self;
+      if (M(this.evpg.text).bool()) {
+        this.evpg.render();
+        return;
+      }
       if (this.you.dead) {
         if (!M(this.evpg.text).bool()) {
           this.evpg.set("end");
@@ -141,7 +138,9 @@
         return obj.render(self.world);
       });
       this.you.render(this.world);
-      return this.you.light.render(this.world, this.unit);
+      this.you.light.render(this.world, this.unit);
+      this.world.fillStyle = new Color(0, 0, 0, 0.5).value;
+      return this.world.fillText("Monsters in the Dark :: " + this.you.hp + " HP", 10, this.universe.height - 10);
     };
 
     return Physics;
