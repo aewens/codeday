@@ -21,7 +21,7 @@ class Physics
     add: (xs...) -> @objects = Mu(xs...).into(@objects)
     gravity: (obj) -> 
         obj.y = obj.y + (@unit / 16)
-        obj.light.y = obj.light.y + (@unit / 16) if M(obj.light).bool()
+        # obj.light.y = obj.light.y + (@unit / 16) if M(obj.light).bool()
     update: () ->
         prev = new Vector2(@you.x, @you.y)
         unless (@you.ground or @you.jumping) and !@you.falling
@@ -33,7 +33,7 @@ class Physics
         @you.update(@keys, @unit, @universe)
         for b in @blocks
             for mob in @mobs
-                mob.sleep() if @you.light.inside(mob)
+                # mob.sleep() if @you.light.inside(mob)
                 [ign, mx, my] = mob.collide(b)
                 if mob.sleeping
                     mob.x = mob.prev.x
@@ -60,7 +60,7 @@ class Physics
                     @you.y = prev.y
                     @you.ground = true
                     @you.falling = false
-        @you.light.update(@you.x, @you.y)
+        # @you.light.update(@you.x, @you.y)
     render: ->
         if M(@evpg.text).bool()
             @evpg.render()
@@ -79,7 +79,7 @@ class Physics
         @darkness.render(@world)
         @objects.map (obj) -> obj.render(self.world)
         @you.render(@world)
-        @you.light.render(@world, @unit)
+        # @you.light.render(@world, @unit)
         
         # Text
         @world.fillStyle = new Color(0,0,0,0.5).value

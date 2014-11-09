@@ -38,14 +38,11 @@
     };
 
     Physics.prototype.gravity = function(obj) {
-      obj.y = obj.y + (this.unit / 16);
-      if (M(obj.light).bool()) {
-        return obj.light.y = obj.light.y + (this.unit / 16);
-      }
+      return obj.y = obj.y + (this.unit / 16);
     };
 
     Physics.prototype.update = function() {
-      var b, ign, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
+      var b, ign, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _results;
       prev = new Vector2(this.you.x, this.you.y);
       if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
         this.gravity(this.you);
@@ -61,14 +58,12 @@
       }
       this.you.update(this.keys, this.unit, this.universe);
       _ref1 = this.blocks;
+      _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         b = _ref1[_j];
         _ref2 = this.mobs;
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           mob = _ref2[_k];
-          if (this.you.light.inside(mob)) {
-            mob.sleep();
-          }
           _ref3 = mob.collide(b), ign = _ref3[0], mx = _ref3[1], my = _ref3[2];
           if (mob.sleeping) {
             mob.x = mob.prev.x;
@@ -103,11 +98,15 @@
           if (!ign) {
             this.you.y = prev.y;
             this.you.ground = true;
-            this.you.falling = false;
+            _results.push(this.you.falling = false);
+          } else {
+            _results.push(void 0);
           }
+        } else {
+          _results.push(void 0);
         }
       }
-      return this.you.light.update(this.you.x, this.you.y);
+      return _results;
     };
 
     Physics.prototype.render = function() {
@@ -138,7 +137,6 @@
         return obj.render(self.world);
       });
       this.you.render(this.world);
-      this.you.light.render(this.world, this.unit);
       this.world.fillStyle = new Color(0, 0, 0, 0.5).value;
       return this.world.fillText("Monsters in the Dark :: " + this.you.hp + " HP", 10, this.universe.height - 10);
     };

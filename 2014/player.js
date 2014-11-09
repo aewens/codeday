@@ -17,7 +17,6 @@
       this.dead = false;
       this.hp = 1;
       this.clock = 0;
-      this.light = new Light(this);
     }
 
     Player.prototype.damage = function(dmg) {

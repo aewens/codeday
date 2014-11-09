@@ -90,11 +90,8 @@
       document.addEventListener("keydown", function(e) {
         return self.keyState[e.keyCode] = true;
       });
-      document.addEventListener("keyup", function(e) {
+      return document.addEventListener("keyup", function(e) {
         return self.keyState[e.keyCode] = false;
-      });
-      return document.addEventListener("dblclick", function(e) {
-        return self.physics.win = true;
       });
     };
 

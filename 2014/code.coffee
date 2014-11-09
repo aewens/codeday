@@ -82,8 +82,8 @@ class Code
             self.keyState[e.keyCode] = true
         document.addEventListener "keyup", (e) -> 
             self.keyState[e.keyCode] = false
-        document.addEventListener "dblclick", (e) ->
-            self.physics.win = true
+        # document.addEventListener "dblclick", (e) ->
+        #     self.physics.win = true
         
     animate: (update, render) ->
         self = @
