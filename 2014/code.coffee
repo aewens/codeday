@@ -63,13 +63,9 @@ darkness = new Box(0, 0, code.canvas.width,
                 code.canvas.height, new Color(0,0,0,0.5))
 mob1 = new Mob(code.unit * 0.5, sy)
 player = new Player(code.unit * 2, sy)
-light = new Light(player, code.unit)
-physics = new Physics(code, level, player, darkness, light)
+physics = new Physics(code, level, player, darkness)
 
 physics.addMobs(mob1)
-
-console.log player
-console.log light
 
 update = ->
     physics.update()

@@ -12,6 +12,7 @@
       this.ground = false;
       this.jumping = false;
       this.falling = true;
+      this.light = new Light(this);
     }
 
     Player.prototype.update = function(key, unit, canvas) {

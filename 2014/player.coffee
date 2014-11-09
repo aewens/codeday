@@ -4,6 +4,7 @@ class Player extends Box
         @ground = false
         @jumping = false
         @falling = true
+        @light = new Light(@)
         
     update: (key, unit, canvas) ->
         if (((key[87] or key[32]) and @ground) or @jumping) and !@falling

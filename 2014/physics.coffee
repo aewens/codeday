@@ -1,5 +1,5 @@
 class Physics
-    constructor: (code, level, you, darkness, light) ->
+    constructor: (code, level, you, darkness) ->
         if M(code,you).all()
             @universe = code.canvas
             @world = code.ctx
@@ -8,7 +8,6 @@ class Physics
             @keys = code.keyState
             @you = you
             @darkness = darkness
-            @light = light
             @objects = []
             @mobs = []
             @blocks = level.blocks
@@ -19,16 +18,17 @@ class Physics
         @mobs = Mu(xs...).into(@mobs)
         @objects = Mu(xs...).into(@objects)
     add: (xs...) -> @objects = Mu(xs...).into(@objects)
-    gravity: (obj) -> obj.y = obj.y + (@unit / (16))
+    gravity: (obj) -> 
+        obj.y = obj.y + (@unit / 16)
+        obj.light.y = obj.light.y + (@unit / 16) if M(obj.light).bool()
     update: ->
         prev = new Vector2(@you.x, @you.y)
-        @gravity(@you,1) unless (@you.ground or @you.jumping) and !@you.falling
+        @gravity(@you) unless (@you.ground or @you.jumping) and !@you.falling
         for mob in @mobs
             mob.prev = new Vector2(mob.x, mob.y)
-            @gravity(mob, 1) unless mob.ground and !mob.falling
+            @gravity(mob) unless mob.ground and !mob.falling
             mob.update(@you, @unit, @world)
         @you.update(@keys, @unit, @world)
-        @light.update(@you)
         for b in @blocks
             for mob in @mobs
                 if mob.collide(b)[1]
@@ -42,6 +42,7 @@ class Physics
                 @you.y = prev.y
                 @you.ground = true
                 @you.falling = false
+        @you.light.update(@you.x, @you.y)
         
     render: ->
         self = @
@@ -49,7 +50,7 @@ class Physics
         @level.render(@world, @unit)
         @darkness.render(@world)
         @you.render(@world)
-        @light.render(@world)
+        @you.light.render(@world, @unit)
         @objects.map (obj) -> obj.render(self.world)
         
 window.Physics = Physics

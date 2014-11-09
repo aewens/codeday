@@ -4,7 +4,7 @@
     __slice = [].slice;
 
   Physics = (function() {
-    function Physics(code, level, you, darkness, light) {
+    function Physics(code, level, you, darkness) {
       if (M(code, you).all()) {
         this.universe = code.canvas;
         this.world = code.ctx;
@@ -13,7 +13,6 @@
         this.keys = code.keyState;
         this.you = you;
         this.darkness = darkness;
-        this.light = light;
         this.objects = [];
         this.mobs = [];
         this.blocks = level.blocks;
@@ -38,28 +37,29 @@
     };
 
     Physics.prototype.gravity = function(obj) {
-      return obj.y = obj.y + (this.unit / 16.);
+      obj.y = obj.y + (this.unit / 16);
+      if (M(obj.light).bool()) {
+        return obj.light.y = obj.light.y + (this.unit / 16);
+      }
     };
 
     Physics.prototype.update = function() {
-      var b, mob, prev, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _results;
+      var b, mob, prev, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
       prev = new Vector2(this.you.x, this.you.y);
       if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
-        this.gravity(this.you, 1);
+        this.gravity(this.you);
       }
       _ref = this.mobs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mob = _ref[_i];
         mob.prev = new Vector2(mob.x, mob.y);
         if (!(mob.ground && !mob.falling)) {
-          this.gravity(mob, 1);
+          this.gravity(mob);
         }
         mob.update(this.you, this.unit, this.world);
       }
       this.you.update(this.keys, this.unit, this.world);
-      this.light.update(this.you);
       _ref1 = this.blocks;
-      _results = [];
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         b = _ref1[_j];
         _ref2 = this.mobs;
@@ -78,12 +78,10 @@
         if (y) {
           this.you.y = prev.y;
           this.you.ground = true;
-          _results.push(this.you.falling = false);
-        } else {
-          _results.push(void 0);
+          this.you.falling = false;
         }
       }
-      return _results;
+      return this.you.light.update(this.you.x, this.you.y);
     };
 
     Physics.prototype.render = function() {
@@ -93,7 +91,7 @@
       this.level.render(this.world, this.unit);
       this.darkness.render(this.world);
       this.you.render(this.world);
-      this.light.render(this.world);
+      this.you.light.render(this.world, this.unit);
       return this.objects.map(function(obj) {
         return obj.render(self.world);
       });

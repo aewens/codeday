@@ -3,14 +3,16 @@
   var Light;
 
   Light = (function() {
-    function Light(player, unit) {
+    function Light(player) {
       var _ref;
       this.you = player;
-      this.unit = unit;
       _ref = [0, 0, 100, 0.2], this.h = _ref[0], this.s = _ref[1], this.l = _ref[2], this.a = _ref[3];
       this.color = new Color(this.h, this.s, this.l, this.a);
       this.radius = this.you.w * 1.5;
-      this.center = [this.you.x + (this.you.w / 2), this.you.y + (this.you.h / 2) - (this.unit / 4)];
+      this.w = this.you.w;
+      this.h = this.you.h;
+      this.x = this.you.x;
+      this.y = this.you.y;
     }
 
     Light.prototype.brightness = function(delta) {
@@ -33,15 +35,15 @@
       return this.radius - 1;
     };
 
-    Light.prototype.update = function(player) {
-      this.you = player;
-      return this.center = [this.you.x + (this.you.w / 2), this.you.y + (this.you.h / 2) - (this.unit / 4)];
+    Light.prototype.update = function(x, y) {
+      this.x = x + (this.w / 2);
+      return this.y = y + (this.h / 2);
     };
 
     Light.prototype.render = function(ctx) {
       ctx.fillStyle = this.color.value;
       ctx.beginPath();
-      ctx.arc(this.center[0], this.center[1], this.radius, 0, 2 * pi);
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * pi);
       ctx.fill();
       return ctx.closePath();
     };
