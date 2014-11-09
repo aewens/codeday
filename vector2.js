@@ -27,11 +27,15 @@
     };
 
     Vector2.prototype.distance = function(v2) {
-      if (M(v2) !== M.None) {
+      if (M(v2).bool()) {
         return sqrt(sqre(v2.x - this.x) + sqre(this.y - v2.y));
       } else {
         return sqrt(sqre(this.prevX - this.x) + sqre(this.prevY - this.y));
       }
+    };
+
+    Vector2.prototype.dist = function(v2) {
+      return this.distance(v2);
     };
 
     Vector2.prototype.changed = function() {
@@ -42,13 +46,18 @@
       }
     };
 
-    Vector2.prototype.diff = function(v2, invert) {
-      var i, _v2;
+    Vector2.prototype.diff2 = function(v2, invert) {
+      var i;
       i = invert ? -1 : 1;
-      _v2 = M(v2).diverge(new Vector2((this.x - this.prevX) * i, (this.y - this.prevY) * i));
-      if (v2 !== _v2) {
+      if (M(v2).bool()) {
         return new Vector2((this.x - v2.x) * i, (this.y - v2.y) * i);
+      } else {
+        return new Vector2((this.x - this.prevX) * i, (this.y - this.prevY) * i);
       }
+    };
+
+    Vector2.prototype.diff = function(v2) {
+      return this.diff2(v2, false);
     };
 
     return Vector2;

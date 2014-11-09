@@ -29,6 +29,7 @@ M.fn = M.prototype =
     orElse: (x) -> if @usable then @  else x
     otherwise: (x) -> @orSome(x)
     elser: (x) -> @orElse(x)
+    bool: (x) -> if @usable then true else false
     choose: (x, y) -> if @x then x else y
     swap: (x, y) -> @x = if @x then x else y
     bind: (fn) -> if @usable then fn(@x) else @

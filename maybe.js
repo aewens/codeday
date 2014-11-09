@@ -71,6 +71,13 @@
     elser: function(x) {
       return this.orElse(x);
     },
+    bool: function(x) {
+      if (this.usable) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     choose: function(x, y) {
       if (this.x) {
         return x;

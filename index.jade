@@ -5,26 +5,36 @@ title Codeday
 style.
     * {margin:0;padding:0;}
     html, body {
-        background: #fff;
+        position: relative;
         overflow: hidden;
-        height: 100%
+        background: #eee;
+        width: 100%;
+        height: 100%;
     }
     
-//- canvas {
-//-     background: "#000" !important; 
-//-     display: block;
-//-     position: absolute;
-//-     margin: auto;
-//-     top: 0;
-//-     bottom: 0;
-//-     left: 0;
-//-     right: 0;
-//- }
+    #wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    
+    canvas {
+        background: #fff;
+        box-shadow: 0px 8px 20px -6px #000;
+    }
 body
     #wrapper
+    //- script(src="jquery.js")
     script(src="math.js")
     script(src="helper.js")
     script(src="maybe.js")
+    script(src="mu.js")
     script(src="vector2.js")
+    script(src="color.js")
     script(src="box.js")
+    script(src="player.js")
+    script(src="mob.js")
+    script(src="testlevel.js")
+    script(src="level.js")
+    script(src="physics.js")
     script(src="code.js")

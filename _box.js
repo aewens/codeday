@@ -11,28 +11,28 @@
       });
     }
 
-    Box.prototype.move = function(dx, dy) {
-      this.x = this.x + dx;
-      this.y = this.y + dy;
-      return this;
-    };
-
-    Box.prototype.collide = function(obj) {
-      var a, b, c, d, floor, m, m1, m2, m3, n, o, p;
+    Box.prototype.intersects = function(obj) {
+      var a, b, c, d, m, n, o, p, w, x, y, z;
       a = this.contains(obj.x, obj.y);
       b = this.contains(obj.x + obj.w, obj.y);
       c = this.contains(obj.x, obj.y + obj.h);
       d = this.contains(obj.x + obj.w, obj.y + obj.h);
-      m1 = M(a, b, c, d);
       m = obj.contains(this.x, this.y);
       n = obj.contains(this.x + this.w, this.y);
       o = obj.contains(this.x, this.y + this.h);
       p = obj.contains(this.x + this.w, this.y + this.h);
-      m2 = M(m, n, o, p);
-      m3 = M(a, b, o, p);
-      this.hit = m1.elser(m2.elser(false));
-      floor = m3.elser(false);
-      return [this.hit, floor];
+      w = M(a, c);
+      x = M(b, d);
+      y = M(m, o);
+      z = M(n, p);
+      this.hit = w.elser(x.elser(y.elser(z.elser(false))));
+      return this.hit;
+    };
+
+    Box.prototype.move = function(dx, dy) {
+      this.x = this.x + dx;
+      this.y = this.y + dy;
+      return this;
     };
 
     Box.prototype.contains = function(x, y) {

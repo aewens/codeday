@@ -17,16 +17,21 @@ class Vector2
         norm
         
     distance: (v2) ->
-        if M(v2) != M.None
-            sqrt(sqre(v2.x - @x) + sqre(@y - v2.y)) #@y flipped because <canvas>
+        #@y flipped because <canvas>
+        if M(v2).bool()
+            sqrt(sqre(v2.x - @x) + sqre(@y - v2.y))
         else 
             sqrt(sqre(@prevX - @x) + sqre(@prevY - @y))
             
+    dist: (v2) -> @distance(v2)
+            
     changed: -> unless @x is @prevX or @y is @prevY then true else false
     
-    diff: (v2, invert) ->
+    diff2: (v2, invert) ->
         i = if invert then -1 else 1
-        _v2 = M(v2).diverge(new Vector2((@x - @prevX) * i, (@y - @prevY) * i))
-        return if v2 != _v2 then new Vector2((@x - v2.x) * i, (@y - v2.y) * i)
+        if M(v2).bool() then new Vector2((@x - v2.x) * i, (@y - v2.y) * i)
+        else new Vector2((@x - @prevX) * i, (@y - @prevY) * i)
+        
+    diff: (v2) -> @diff2(v2, false)
         
 window.Vector2 = Vector2
