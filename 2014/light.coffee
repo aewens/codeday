@@ -3,7 +3,7 @@ class Light
         @you = player
         [@h,@s,@l,@a] = [0, 0, 100, 0.2]
         @color = new Color(@h,@s,@l,@a)
-        @radius = @you.w * 1.5
+        @radius = @you.w * 2
         @w = @you.w 
         @h = @you.h
         @x = @you.x

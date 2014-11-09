@@ -8,7 +8,7 @@
       this.you = player;
       _ref = [0, 0, 100, 0.2], this.h = _ref[0], this.s = _ref[1], this.l = _ref[2], this.a = _ref[3];
       this.color = new Color(this.h, this.s, this.l, this.a);
-      this.radius = this.you.w * 1.5;
+      this.radius = this.you.w * 2;
       this.w = this.you.w;
       this.h = this.you.h;
       this.x = this.you.x;

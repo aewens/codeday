@@ -5,9 +5,16 @@ class Player extends Box
         @jumping = false
         @falling = true
         @dead = false
+        @hp = 1
         @light = new Light(@)
         
+    damage: (dmg) -> @hp = @hp - dmg
+        
     update: (key, unit, canvas) ->
+        if @dead then return
+        if @hp < 1
+            @dead = true
+            console.log "Dead"
         if (((key[87] or key[32]) and @ground) or @jumping) and !@falling
             if key[65] then @move(-(unit / 20),0)
             if key[68] then @move((unit / 20),0)

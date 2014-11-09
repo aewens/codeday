@@ -11,9 +11,33 @@
       Mob.__super__.constructor.call(this, x, y, 50, 50, new Color(0, 0, 0));
       this.ground = false;
       this.falling = true;
+      this.clock = 0;
+      this.go = false;
+      this.dir = 0;
+      this.canHit = false;
     }
 
+    Mob.prototype.pick = function() {
+      return this.dir = round(random()) * 2 - 1;
+    };
+
+    Mob.prototype.hurt = function(player) {
+      if (this.strike(player)) {
+        player.damage(1);
+        return this.canHit = true;
+      }
+    };
+
     Mob.prototype.update = function(player, unit, canvas) {
+      this.clock = (this.clock + 1) % 100;
+      if (this.clock === 0) {
+        this.go = !this.go;
+        this.pick();
+        this.canHit = false;
+      }
+      if (this.go) {
+        this.move(this.dir * (unit / 20), 0);
+      }
       if (this.x < 0) {
         this.x = 0;
       }
@@ -23,8 +47,8 @@
       if (this.x + this.w > canvas.width) {
         this.x = canvas.width - this.w;
       }
-      if (this.y + this.h > canvas.height) {
-        return this.y = canvas.height - this.h;
+      if (!this.canHit) {
+        return this.hurt(player);
       }
     };
 

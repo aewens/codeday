@@ -13,10 +13,22 @@
       this.jumping = false;
       this.falling = true;
       this.dead = false;
+      this.hp = 1;
       this.light = new Light(this);
     }
 
+    Player.prototype.damage = function(dmg) {
+      return this.hp = this.hp - dmg;
+    };
+
     Player.prototype.update = function(key, unit, canvas) {
+      if (this.dead) {
+        return;
+      }
+      if (this.hp < 1) {
+        this.dead = true;
+        console.log("Dead");
+      }
       if ((((key[87] || key[32]) && this.ground) || this.jumping) && !this.falling) {
         if (key[65]) {
           this.move(-(unit / 20), 0);

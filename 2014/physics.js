@@ -44,7 +44,7 @@
     };
 
     Physics.prototype.update = function() {
-      var b, mob, prev, x, y, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+      var b, mob, mx, my, prev, px, py, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4;
       prev = new Vector2(this.you.x, this.you.y);
       if (!((this.you.ground || this.you.jumping) && !this.you.falling)) {
         this.gravity(this.you);
@@ -65,17 +65,21 @@
         _ref2 = this.mobs;
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           mob = _ref2[_k];
-          if (mob.collide(b)[1]) {
+          _ref3 = mob.collide(b), mx = _ref3[0], my = _ref3[1];
+          if (mx) {
+            mob.x = mob.prev.x;
+          }
+          if (my) {
             mob.y = mob.prev.y;
             mob.ground = true;
             mob.falling = false;
           }
         }
-        _ref3 = this.you.collide(b), x = _ref3[0], y = _ref3[1];
-        if (x) {
+        _ref4 = this.you.collide(b), px = _ref4[0], py = _ref4[1];
+        if (px) {
           this.you.x = prev.x;
         }
-        if (y) {
+        if (py) {
           this.you.y = prev.y;
           this.you.ground = true;
           this.you.falling = false;

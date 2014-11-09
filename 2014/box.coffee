@@ -8,6 +8,22 @@ class Box
         @y = @y + dy
         @
         
+    strike: (obj) ->
+        a = @contains(obj.x, obj.y)
+        b = @contains(obj.x + obj.w, obj.y)
+        c = @contains(obj.x, obj.y + obj.h)
+        d = @contains(obj.x + obj.w, obj.y + obj.h)
+        m1 = M(a,b,c,d)
+        
+        m = obj.contains(@x, @y)
+        n = obj.contains(@x + @w, @y)
+        o = obj.contains(@x, @y + @h) 
+        p = obj.contains(@x + @w, @y + @h)
+        m2 = M(m,n,o,p)
+        
+        @hit = m1.elser(m2.elser(false))
+        return @hit
+        
     collide: (obj) ->
         a = @contains(obj.x, obj.y)
         b = @contains(obj.x + obj.w, obj.y)

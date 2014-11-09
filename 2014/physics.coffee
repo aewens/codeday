@@ -31,19 +31,19 @@ class Physics
         @you.update(@keys, @unit, @universe)
         for b in @blocks
             for mob in @mobs
-                if mob.collide(b)[1]
+                [mx, my] = mob.collide(b)
+                if mx then mob.x = mob.prev.x
+                if my
                     mob.y = mob.prev.y
                     mob.ground = true
                     mob.falling = false
-            [x, y] = @you.collide(b)
-            if x
-                @you.x = prev.x
-            if y
+            [px, py] = @you.collide(b)
+            if px then @you.x = prev.x
+            if py
                 @you.y = prev.y
                 @you.ground = true
                 @you.falling = false
         @you.light.update(@you.x, @you.y)
-        
     render: ->
         self = @
         @world.clearRect(0, 0, @universe.width, @universe.height)
