@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+jade -wP index.jade & coffee -o bin/ -wc src/ && fg

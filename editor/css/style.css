@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+html {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+#app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+nav ul li {
+    display: inline-block;
+}
+header span {
+    font-family: "Fira Mono", monospace;
+    font-size: 48px;
+    font-weight: bold;
+    padding: 8px;
+}

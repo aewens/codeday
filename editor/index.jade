@@ -1,0 +1,27 @@
+doctype html
+title &mu;Text
+link(href="http://fonts.googleapis.com/css?family=Fira+Mono", rel="stylesheet")
+link(href="css/style.css", rel="stylesheet")
+body
+    #app
+        nav
+            ul
+                li File
+                li Edit
+                li Help
+        aside
+            ul
+                li Files
+                ul /folder
+                li test.coffee
+                li test.js
+        header
+            span &mu;Text
+        section
+            textarea
+            #editor Edit me!
+        footer
+            span Made by Austin Ewens
+noscript I'm sorry.
+script(data-main="bin/main", src="vendor/require.js")
+    
