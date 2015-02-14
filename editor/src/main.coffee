@@ -6,8 +6,8 @@ require.config
         
 require [
     "jquery",
-    "layout"
-], ($, Layout) ->
+    "layout",
+    "events",
+], ($, Layout, Events) ->
     $(document).ready ->
-        layout = new Layout("#app")
-        layout.move()
+        layout = new Layout

@@ -3,15 +3,8 @@
   define(["jquery"], function($) {
     var Layout;
     Layout = (function() {
-      function Layout(root) {
-        this.root = $(root);
-        if (this.root === []) {
-          console.log("Error 00: `root` is null");
-        }
-      }
-
-      Layout.prototype.move = function() {
-        var aside, footer, h, header, height, logo, nav, section, w, width;
+      function Layout() {
+        var ascale, aside, editor, footer, ftext, h, header, height, logo, nav, section, textarea, w, width;
         console.log("Setting elements in place...");
         nav = $("nav");
         header = $("header");
@@ -39,8 +32,23 @@
             return $(this).width(64);
           });
         });
-        return width = w;
-      };
+        width = w;
+        ascale = 0.15;
+        aside.width(width * ascale);
+        aside.height(height);
+        width = width - (width * ascale);
+        height = height - 24;
+        section.width(width);
+        section.height(height);
+        textarea = section.children()[0];
+        editor = section.children()[1];
+        footer.width(width);
+        footer.height(24);
+        footer.css("left", w * ascale);
+        ftext = footer.children()[0];
+        $(ftext).css("margin", "8px");
+        return editor;
+      }
 
       return Layout;
 

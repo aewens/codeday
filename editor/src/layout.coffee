@@ -1,9 +1,6 @@
 define ["jquery"], ($) ->
     class Layout
-        constructor: (root) ->
-            @root = $(root)
-            console.log "Error 00: `root` is null" if @root is []
-        move: ->
+        constructor: ->
             console.log "Setting elements in place..."
             nav     = $("nav")
             header  = $("header")
@@ -34,8 +31,27 @@ define ["jquery"], ($) ->
                     $(this).css("line-height", "24px")
                     $(this).width(64)
             width = w
-             
-                
+            # aside
+            ascale = 0.15
+            aside.width(width * ascale)
+            aside.height(height)
+            width = width - (width * ascale)
+            
+            # section
+            height = height - 24
+            section.width(width)
+            section.height(height)
+            textarea = section.children()[0]
+            editor   = section.children()[1]
+            
+            # footer
+            footer.width(width)
+            footer.height(24)
+            footer.css("left", w * ascale)
+            ftext = footer.children()[0]
+            $(ftext).css("margin", "8px")
+            
+            return editor
             
         
     return Layout

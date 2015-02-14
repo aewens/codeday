@@ -8,11 +8,10 @@
     }
   });
 
-  require(["jquery", "layout"], function($, Layout) {
+  require(["jquery", "layout", "events"], function($, Layout, Events) {
     return $(document).ready(function() {
       var layout;
-      layout = new Layout("#app");
-      return layout.move();
+      return layout = new Layout;
     });
   });
 

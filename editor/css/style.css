@@ -8,6 +8,7 @@ html {
     height: 100%;
     box-sizing: border-box;
     font-family: "Fira Mono", monospace;
+    overflow: hidden;
 }
 *, *:before, *:after {
     box-sizing: inherit;
@@ -42,4 +43,33 @@ header nav ul li {
 header nav ul li:hover {
     background: #eee;
     box-shadow: 0 8px 6px -6px black;
+}
+aside {
+    background: #ccc;
+    float: left;
+}
+section {
+    background: #fff;
+    float: left;
+    position: relative;
+}
+section textarea {
+    border: none;
+    outline: none;
+    resize: none;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+}
+section #editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+footer {
+    background: #bbb;
+    position: absolute;
+    bottom: 0;
 }
