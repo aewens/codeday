@@ -12,7 +12,7 @@
     return $(document).ready(function() {
       var layout;
       layout = new Layout("#app");
-      return layout.sizes();
+      return layout.move();
     });
   });
 

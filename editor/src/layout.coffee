@@ -2,29 +2,39 @@ define ["jquery"], ($) ->
     class Layout
         constructor: (root) ->
             @root = $(root)
-            unless @root is []
-                console.log "Root is: (#{@root.element})"
-            else
-                console.log "Error 00: `root` is null"
-        sizes: ->
+            console.log "Error 00: `root` is null" if @root is []
+        move: ->
+            console.log "Setting elements in place..."
             nav     = $("nav")
-            aside   = $("aside")
             header  = $("header")
+            aside   = $("aside")
             section = $("section")
             footer  = $("footer")
-            width   = window.innerWidth
-            height  = window.innerHeight
+            width   = w = window.innerWidth
+            height  = h = window.innerHeight
+            
+            # header
+            height = height - 24
+            header.width(width)
+            header.height(24)
+            width = width - 64
+            logo = header.children()[0]
+            $(logo).width(64)
+            $(logo).height(24)
+            $(logo).css("line-height", "24px")
             
             # nav
-            height = height - 24
             nav.width(width)
             nav.height(24)
             # To center text
             nav.children().each ->
                 self = this
                 $(self).css("line-height", "24px")
-                $(self).each ->
+                $(self).children().each ->
                     $(this).css("line-height", "24px")
+                    $(this).width(64)
+            width = w
+             
                 
             
         

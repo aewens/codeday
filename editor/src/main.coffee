@@ -10,4 +10,4 @@ require [
 ], ($, Layout) ->
     $(document).ready ->
         layout = new Layout("#app")
-        layout.sizes()
+        layout.move()

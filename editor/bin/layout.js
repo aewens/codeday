@@ -5,33 +5,41 @@
     Layout = (function() {
       function Layout(root) {
         this.root = $(root);
-        if (this.root !== []) {
-          console.log("Root is: (" + this.root.element + ")");
-        } else {
+        if (this.root === []) {
           console.log("Error 00: `root` is null");
         }
       }
 
-      Layout.prototype.sizes = function() {
-        var aside, footer, header, height, nav, section, width;
+      Layout.prototype.move = function() {
+        var aside, footer, h, header, height, logo, nav, section, w, width;
+        console.log("Setting elements in place...");
         nav = $("nav");
-        aside = $("aside");
         header = $("header");
+        aside = $("aside");
         section = $("section");
         footer = $("footer");
-        width = window.innerWidth;
-        height = window.innerHeight;
+        width = w = window.innerWidth;
+        height = h = window.innerHeight;
         height = height - 24;
+        header.width(width);
+        header.height(24);
+        width = width - 64;
+        logo = header.children()[0];
+        $(logo).width(64);
+        $(logo).height(24);
+        $(logo).css("line-height", "24px");
         nav.width(width);
         nav.height(24);
-        return nav.children().each(function() {
+        nav.children().each(function() {
           var self;
           self = this;
           $(self).css("line-height", "24px");
-          return $(self).each(function() {
-            return $(this).css("line-height", "24px");
+          return $(self).children().each(function() {
+            $(this).css("line-height", "24px");
+            return $(this).width(64);
           });
         });
+        return width = w;
       };
 
       return Layout;
