@@ -26,8 +26,8 @@
         return this.lines.append($("<li/>").attr("line", this.lineCount).text(this.lineCount));
       };
 
-      Edit.prototype.run = function(key) {
-        return cmd.run(key, this);
+      Edit.prototype.run = function(key, e) {
+        return cmd.run(key, e, this);
       };
 
       return Edit;

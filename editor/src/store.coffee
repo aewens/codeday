@@ -52,7 +52,7 @@ define ["jquery"], ($) ->
             store.push({name: filename, text: text})
             localStorage["mu_files"] = JSON.stringify(store)
             @fileName.val("")
-            @fileText.html("")
+            @fileText.val("")
             @fileSave.html("Saved")
         deleteFile: (filename) ->
             store = JSON.parse localStorage["mu_files"]

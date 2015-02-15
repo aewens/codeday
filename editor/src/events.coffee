@@ -10,9 +10,9 @@ define ["jquery", "keys"], ($, K) ->
             $(document).on "keydown", (e) ->
                 key = e.keyCode
                 K.set(key, true)
-                self.edit.run(key)
             $(document).on "keyup", (e) ->
                 key = e.keyCode
+                self.edit.run(key, e)
                 K.set(key, false)
             
     return Events

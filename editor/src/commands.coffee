@@ -1,24 +1,34 @@
-define ["keys", "store"], (Keys, Store) ->
+define ["keys", "store", "mods/rgx"], (Keys, Store, Rgx) ->
     return {
-        isset: (key) -> Keys.pressed[key]
         commands:
-            newline: (enter, edit) ->
+            newline: (enter, e, edit) ->
                 unless enter is Keys.enter and !$("#dialog").is(":visible")
                     return 
                 edit.line()
-            # move: (arrow, edit) ->
-            #     switch arrow
-            #         when Keys.up then edit.cy -= 1 if edit.cy > 0
-            #         when Keys.down then edit.cy += 1 if edit.cy < edit.lineCount
-            #         when Keys.left
-            #             edit.cx -= 1 if edit.cx > 0
-            #             console.log edit.cx
-            #         when Keys.right then edit.cx += 1 if edit.cx > edit.ux
-            #         else
-            #             edit.cx += 1
-            #             edit.editor.val().slice(0, edit.editor.selectionStart).length
-            #     $("#here").html("| #{edit.cx},#{edit.cy} | ")
-            savefile: (s, edit) ->
+            # bracket: (open, e, edit) ->
+            #     a = open is Keys.open
+            #     b = Keys.pressed[Keys.shift]
+            #     c = open is Keys.comma
+            #     d = open is Keys[9]
+            #     return unless (a or (b and (c) or (d)))
+            #     select = (text, at) ->
+            #         part = text.slice(at-1,at)
+            #         index  = text.indexOf(part)
+            #         length = part.length
+            #         before = text.slice(0, index)
+            #         after  = text.slice(index + length)
+            #         [before, part, after]
+            #     ta = document.querySelector("textarea")
+            #     to = ta.selectionEnd
+            #     tr = window.getSelection().getRangeAt(0)
+            #     tc = tr.collapse(false)
+            #     console.log tc
+            #     [before, text, after] = select($("textarea").val(), to)
+            #     console.log before, text, after
+            #     $("textarea").val("#{before}#{text})#{after}")
+            #     console.log to
+            #     $("#textarea").select()
+            savefile: (s, e, edit) ->
                 return unless Keys.pressed[Keys.ctrl] and s is Keys.s
                 e.preventDefault()
                 $("#dialog").show().focus().attr("placeholder", "File name...")
@@ -33,14 +43,14 @@ define ["keys", "store"], (Keys, Store) ->
                                     )
                                     store.saveFile(
                                         $("#dialog").val(),
-                                        $("textarea").html()
+                                        $("textarea").val()
                                     )
                                     store.listFiles()
-                                    $(this).hide()
+                                    $(this).val("").hide()
                                 else if e.keyCode is Keys.esc
-                                    $(this).hide()
+                                    $(this).val("").hide()
                                     $("textarea").focus()
-        run: (key, edit) ->
+        run: (key, e, edit) ->
             for cmd of @commands
-                @commands[cmd](key, edit)
+                @commands[cmd](key, e, edit)
     }

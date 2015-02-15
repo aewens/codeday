@@ -16,12 +16,12 @@
         $(document).on("keydown", function(e) {
           var key;
           key = e.keyCode;
-          K.set(key, true);
-          return self.edit.run(key);
+          return K.set(key, true);
         });
         return $(document).on("keyup", function(e) {
           var key;
           key = e.keyCode;
+          self.edit.run(key, e);
           return K.set(key, false);
         });
       };

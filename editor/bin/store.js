@@ -73,7 +73,7 @@
         });
         localStorage["mu_files"] = JSON.stringify(store);
         this.fileName.val("");
-        this.fileText.html("");
+        this.fileText.val("");
         return this.fileSave.html("Saved");
       };
 

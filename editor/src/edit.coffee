@@ -27,7 +27,7 @@ define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
                 $("<li/>").attr("line", @lineCount)
                           .text(@lineCount)
             )
-        run: (key) ->
-            cmd.run(key, @)
+        run: (key, e) ->
+            cmd.run(key, e, @)
             
     return Edit
