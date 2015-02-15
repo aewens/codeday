@@ -57,6 +57,60 @@
         return $(section.children()[1]);
       }
 
+      Layout.prototype.resize = function() {
+        var ascale, aside, dheight, dialog, dwidth, footer, ftext, h, header, height, lines, logo, nav, section, textarea, w, width;
+        console.log("Setting elements in place...");
+        dialog = $("#dialog");
+        header = $("header");
+        nav = $("nav");
+        aside = $("aside");
+        section = $("section");
+        footer = $("footer");
+        width = w = window.innerWidth;
+        height = h = window.innerHeight;
+        dwidth = width * 0.5;
+        dheight = 32;
+        dialog.width(dwidth).height(dheight).css({
+          top: height / 2,
+          marginTop: -(dheight / 2),
+          left: width / 2,
+          marginLeft: -(dwidth / 2)
+        });
+        height = height - 24;
+        header.width(width).height(24);
+        width = width - 64;
+        logo = header.children()[0];
+        $(logo).width(64).height(24).css("line-height", "24px");
+        nav.width(width).height(24);
+        nav.children().each(function() {
+          var self;
+          self = this;
+          $(self).css("line-height", "24px");
+          return $(self).children().each(function() {
+            $(this).css("line-height", "24px");
+            return $(this).width(64);
+          });
+        });
+        width = w;
+        ascale = 0.15;
+        aside.width(width * ascale).height(height);
+        width = width - (width * ascale);
+        height = height - 24;
+        section.width(width).height(height);
+        width = width - 24;
+        lines = $(section.children()[0]).width(24).height(height);
+        textarea = $(section.children()[1]).css({
+          width: width,
+          height: height,
+          left: 24
+        });
+        width = w;
+        footer.width(width).height(24).css("left", w * ascale);
+        ftext = footer.children()[0];
+        $(ftext).css("margin", "8px");
+        return $(section.children()[1]);
+      };
+
       return Layout;
 
     })();

@@ -1,33 +1,31 @@
-define ["keys", "store", "mods/rgx"], (Keys, Store, Rgx) ->
+define ["jquery", "keys", "store", "user", "helper"], ($, Keys, Store, User, _) ->
     return {
         commands:
             newline: (enter, e, edit) ->
                 unless enter is Keys.enter and !$("#dialog").is(":visible")
                     return 
                 edit.line()
-            # bracket: (open, e, edit) ->
-            #     a = open is Keys.open
-            #     b = Keys.pressed[Keys.shift]
-            #     c = open is Keys.comma
-            #     d = open is Keys[9]
-            #     return unless (a or (b and (c) or (d)))
-            #     select = (text, at) ->
-            #         part = text.slice(at-1,at)
-            #         index  = text.indexOf(part)
-            #         length = part.length
-            #         before = text.slice(0, index)
-            #         after  = text.slice(index + length)
-            #         [before, part, after]
-            #     ta = document.querySelector("textarea")
-            #     to = ta.selectionEnd
-            #     tr = window.getSelection().getRangeAt(0)
-            #     tc = tr.collapse(false)
-            #     console.log tc
-            #     [before, text, after] = select($("textarea").val(), to)
-            #     console.log before, text, after
-            #     $("textarea").val("#{before}#{text})#{after}")
-            #     console.log to
-            #     $("#textarea").select()
+            load: (l, e, edit) ->
+                ctrl = Keys.pressed[Keys.ctrl]
+                return unless ctrl and (l is Keys.l)
+                e.preventDefault()
+                edit.buffer = _.selected()
+                $("#save").text("Loaded")
+            dialog: (p, e, edit) ->
+                ctrl = Keys.pressed[Keys.ctrl]
+                shift = Keys.pressed[Keys.shift]
+                return unless ctrl and shift and (p is Keys.p)
+                e.preventDefault()
+                $("#dialog").show().focus().attr("placeholder", "Command...")
+                    .on "keyup", (e) ->
+                        if e.keyCode is Keys.enter
+                            cmd = $(this).val()
+                            User[cmd](e, edit) unless User[cmd] is undefined
+                            $(this).val("").hide()
+                            $("textarea").focus()
+                        else if e.keyCode is Keys.esc
+                            $(this).val("").hide()
+                            $("textarea").focus()
             savefile: (s, e, edit) ->
                 return unless Keys.pressed[Keys.ctrl] and s is Keys.s
                 e.preventDefault()

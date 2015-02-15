@@ -1,9 +1,11 @@
-define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
+define ["jquery", "mods/dom", "commands", "layout"], ($, Dom, cmd, Layout) ->
     class Edit
         constructor: (editor) ->
             @editor = editor
             @lines  = $("#lines")
             @editor.focus()
+            
+            @buffer = null
             
             # Location data
             @cx = 0
@@ -20,6 +22,11 @@ define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
             
             # Initialize first line
             @line()
+            
+            self = @
+            window.addEventListener "resize", (e) ->
+                (new Layout).resize()
+                setTimeout((-> self.editor.focus()), 500)
         line: ->
             @lineCount = @lineCount + 1
             lines  = (new Dom).find("#lines").element
@@ -27,6 +34,8 @@ define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
                 $("<li/>").attr("line", @lineCount)
                           .text(@lineCount)
             )
+        load: (text) ->
+            @buffer = text
         run: (key, e) ->
             cmd.run(key, e, @)
             
