@@ -17,7 +17,7 @@
           var key;
           key = e.keyCode;
           K.set(key, true);
-          return self.edit.run(key, K.pressed);
+          return self.edit.run(key);
         });
         return $(document).on("keyup", function(e) {
           var key;

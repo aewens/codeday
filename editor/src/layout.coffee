@@ -2,13 +2,24 @@ define ["jquery"], ($) ->
     class Layout
         constructor: ->
             console.log "Setting elements in place..."
-            nav     = $("nav")
+            dialog  = $("#dialog")
             header  = $("header")
+            nav     = $("nav")
             aside   = $("aside")
             section = $("section")
             footer  = $("footer")
             width   = w = window.innerWidth
             height  = h = window.innerHeight
+            
+            # dialog
+            dwidth = width * 0.5
+            dheight = 32
+            dialog.width(dwidth).height(dheight).css({
+                top: height / 2
+                marginTop: -(dheight / 2)
+                left: width / 2
+                marginLeft: -(dwidth / 2)
+            })
             
             # header
             height = height - 24

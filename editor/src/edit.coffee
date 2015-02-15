@@ -10,6 +10,14 @@ define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
             @cy = 0
             @lineCount = 0
             
+            # Text data
+            @tw = @editor.css("font-size") - 4
+            @th = @editor.css("font-size") + 11
+            @cw = @editor.width()
+            @ch = @editor.height()
+            @ux = Math.floor(@cw / @tw)
+            @uy = Math.floor(@ch / @th)
+            
             # Initialize first line
             @line()
         line: ->
@@ -19,7 +27,7 @@ define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
                 $("<li/>").attr("line", @lineCount)
                           .text(@lineCount)
             )
-        run: (key, pressed) ->
+        run: (key) ->
             cmd.run(key, @)
             
     return Edit

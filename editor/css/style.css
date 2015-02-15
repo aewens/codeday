@@ -23,16 +23,35 @@ html {
     width: 100%;
     height: 100%;
     position: relative;
-    opacity: 0;
+    /*opacity: 0;*/
     font-family: "Fira Mono", monospace;
 }
 .clear {
     clear: both;
 }
-.cell, .cursor {
+/*.cell, .cursor {
     position: absolute;
     color: #000;
     background: #fff;
+}*/
+.del-file {
+    color: hsl(5, 100%, 25%);
+}
+.hr {
+    width: 100%;
+    height: 0;
+    border-bottom: 1px solid #ddd;
+    margin: 10px 0;
+}
+#dialog {
+    position: absolute;
+    border: 5px solid rgba(200, 200, 200, 0.25);
+    border-radius: 5px;
+    outline: none;
+    font-size: 18px;
+    padding: 5px 8px;
+    box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.5);
+    z-index: 2;
 }
 header {
     background: #789;
@@ -59,6 +78,16 @@ header nav ul li:hover {
 aside {
     background: #ccc;
     float: left;
+}
+aside span {
+    display: block;
+    margin-top: 10px;
+}
+aside span, aside ul {
+    padding-left: 5px;
+}
+aside ul li {
+    cursor: pointer
 }
 section {
     background: #fff;

@@ -10,6 +10,12 @@
         this.cx = 0;
         this.cy = 0;
         this.lineCount = 0;
+        this.tw = this.editor.css("font-size") - 4;
+        this.th = this.editor.css("font-size") + 11;
+        this.cw = this.editor.width();
+        this.ch = this.editor.height();
+        this.ux = Math.floor(this.cw / this.tw);
+        this.uy = Math.floor(this.ch / this.th);
         this.line();
       }
 
@@ -20,7 +26,7 @@
         return this.lines.append($("<li/>").attr("line", this.lineCount).text(this.lineCount));
       };
 
-      Edit.prototype.run = function(key, pressed) {
+      Edit.prototype.run = function(key) {
         return cmd.run(key, this);
       };
 

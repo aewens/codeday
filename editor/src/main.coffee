@@ -9,21 +9,34 @@ require [
     "layout",
     "edit",
     "events",
-], ($, Layout, Edit, Events) ->
-    phrases = [
-        "ಠ_ಠ",
-        # "µText",
-        # "Loading",
-        # "Installing malware",
-        # "Hacking the FBI",
-        # "Always watching"
-    ]
+    "store"
+], ($, Layout, Edit, Events, Store) ->
+    # phrases = [
+    #     "ಠ_ಠ",
+    #     # "µText",
+    #     # "Loading",
+    #     # "Installing malware",
+    #     # "Hacking the FBI",
+    #     # "Always watching"
+    # ]
     $(document).ready ->
-        phrase = Math.floor(Math.random() * phrases.length) % phrases.length
-        $("#load").html(phrases[phrase])
+        # phrase = Math.floor(Math.random() * phrases.length) % phrases.length
+        # $("#load").html(phrases[phrase])
         go = ->
             events = new Events(new Edit(new Layout))
-            $("#load").remove()
-            $("#app").css("opacity", 1)
+            $("#dialog").hide()
+            # $("#load").remove()
+            # $("#app").css("opacity", 1)
+            store = new Store(
+                $("#dialog"),
+                $("textarea"),
+                $("#files"),
+                $("#info"),
+                $("#save")
+            )
+            store.listFiles()
+            $("a.edit-file").on "click", (e) ->
+                e.preventDefault()
+                store.loadFile($(this).text())
             events.press()
         setTimeout(go, 100)

@@ -3,8 +3,9 @@ title &mu;Text
 link(href="http://fonts.googleapis.com/css?family=Fira+Mono|Lobster", rel="stylesheet")
 link(href="css/style.css", rel="stylesheet")
 body
-    #load
+    //- #load
     #app
+        input#dialog(type="text")
         header
             span &mu;Text
             nav
@@ -14,17 +15,19 @@ body
                     li Help
         .clear
         aside
-            ul
-                li Files
-                ul /folder
-                li test.coffee
-                li test.js
+            span Files
+            .hr
+            ul#files
+                //- li.file test.coffee
+                //- li.file test.js
         section
             ul#lines
             textarea
         .clear
         footer
-            span folder/test.coffee 0,0
+            span#info untitled
+            span#here |  
+            span#save Saved
 noscript I'm sorry.
 script(data-main="bin/main", src="vendor/require.js")
     

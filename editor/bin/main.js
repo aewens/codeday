@@ -8,18 +8,19 @@
     }
   });
 
-  require(["jquery", "layout", "edit", "events"], function($, Layout, Edit, Events) {
-    var phrases;
-    phrases = ["ಠ_ಠ"];
+  require(["jquery", "layout", "edit", "events", "store"], function($, Layout, Edit, Events, Store) {
     return $(document).ready(function() {
-      var go, phrase;
-      phrase = Math.floor(Math.random() * phrases.length) % phrases.length;
-      $("#load").html(phrases[phrase]);
+      var go;
       go = function() {
-        var events;
+        var events, store;
         events = new Events(new Edit(new Layout));
-        $("#load").remove();
-        $("#app").css("opacity", 1);
+        $("#dialog").hide();
+        store = new Store($("#dialog"), $("textarea"), $("#files"), $("#info"), $("#save"));
+        store.listFiles();
+        $("a.edit-file").on("click", function(e) {
+          e.preventDefault();
+          return store.loadFile($(this).text());
+        });
         return events.press();
       };
       return setTimeout(go, 100);

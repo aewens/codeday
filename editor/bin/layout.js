@@ -4,15 +4,24 @@
     var Layout;
     Layout = (function() {
       function Layout() {
-        var ascale, aside, footer, ftext, h, header, height, lines, logo, nav, section, textarea, w, width;
+        var ascale, aside, dheight, dialog, dwidth, footer, ftext, h, header, height, lines, logo, nav, section, textarea, w, width;
         console.log("Setting elements in place...");
-        nav = $("nav");
+        dialog = $("#dialog");
         header = $("header");
+        nav = $("nav");
         aside = $("aside");
         section = $("section");
         footer = $("footer");
         width = w = window.innerWidth;
         height = h = window.innerHeight;
+        dwidth = width * 0.5;
+        dheight = 32;
+        dialog.width(dwidth).height(dheight).css({
+          top: height / 2,
+          marginTop: -(dheight / 2),
+          left: width / 2,
+          marginLeft: -(dwidth / 2)
+        });
         height = height - 24;
         header.width(width).height(24);
         width = width - 64;
