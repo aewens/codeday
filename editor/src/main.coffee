@@ -7,7 +7,9 @@ require.config
 require [
     "jquery",
     "layout",
+    "grid",
     "events",
-], ($, Layout, Events) ->
+], ($, Layout, Grid, Events) ->
     $(document).ready ->
-        layout = new Layout
+        events = new Events(new Grid(new Layout))
+        events.press()

@@ -8,10 +8,11 @@
     }
   });
 
-  require(["jquery", "layout", "events"], function($, Layout, Events) {
+  require(["jquery", "layout", "grid", "events"], function($, Layout, Grid, Events) {
     return $(document).ready(function() {
-      var layout;
-      return layout = new Layout;
+      var events;
+      events = new Events(new Grid(new Layout));
+      return events.press();
     });
   });
 

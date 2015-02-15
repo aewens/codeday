@@ -1,6 +1,6 @@
 define ->
-    $ =
-        new: -> Object.create($)
+    class Dom
+        constructor: ->
         create: (element) ->
             @element = document.createElement(element)
             if @isElement(@element)
@@ -31,4 +31,4 @@ define ->
                 @element = element
             @
             
-    return $
+    return Dom
