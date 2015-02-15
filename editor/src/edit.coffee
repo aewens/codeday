@@ -1,4 +1,4 @@
-define ["jquery", "mods/dom"], ($, Dom) ->
+define ["jquery", "mods/dom", "commands"], ($, Dom, cmd) ->
     class Edit
         constructor: (editor) ->
             @editor = editor
@@ -19,5 +19,7 @@ define ["jquery", "mods/dom"], ($, Dom) ->
                 $("<li/>").attr("line", @lineCount)
                           .text(@lineCount)
             )
+        run: (key, pressed) ->
+            cmd.run(key, @)
             
     return Edit
