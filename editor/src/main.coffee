@@ -38,5 +38,5 @@ require [
             $("a.edit-file").on "click", (e) ->
                 e.preventDefault()
                 store.loadFile($(this).text())
-            events.press()
+            events.press(store)
         setTimeout(go, 500)

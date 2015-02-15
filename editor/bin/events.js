@@ -10,13 +10,15 @@
         $("textarea").focus();
       }
 
-      Events.prototype.press = function() {
+      Events.prototype.press = function(store) {
         var self;
         self = this;
+        this.edit.store = store;
         $(document).on("keydown", function(e) {
           var key;
           key = e.keyCode;
           K.set(key, true);
+          $("#save").text("*");
           return self.edit.run(key, e);
         });
         return $(document).on("keyup", function(e) {

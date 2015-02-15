@@ -21,6 +21,7 @@ define ["jquery"], ($) ->
         displayEntries: (entries) ->
             @fileList.html("")
             for entry in entries
+                continue if entry.name is ""
                 li   = $("<li/>")
                 li.addClass("file")
                 
@@ -51,8 +52,6 @@ define ["jquery"], ($) ->
             store = JSON.parse(localStorage["mu_files"])
             store.push({name: filename, text: text})
             localStorage["mu_files"] = JSON.stringify(store)
-            @fileName.val("")
-            @fileText.val("")
             @fileSave.html("Saved")
         deleteFile: (filename) ->
             store = JSON.parse localStorage["mu_files"]

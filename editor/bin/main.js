@@ -27,7 +27,7 @@
           e.preventDefault();
           return store.loadFile($(this).text());
         });
-        return events.press();
+        return events.press(store);
       };
       return setTimeout(go, 500);
     });

@@ -1,4 +1,4 @@
-define ["jquery", "keys", "store", "user", "helper"], ($, Keys, Store, User, _) ->
+define ["jquery", "keys", "user", "helper"], ($, Keys, User, _) ->
     return {
         commands:
             newline: (enter, e, edit) ->
@@ -32,13 +32,7 @@ define ["jquery", "keys", "store", "user", "helper"], ($, Keys, Store, User, _) 
                 $("#dialog").show().focus().attr("placeholder", "File name...")
                             .on "keyup", (e) ->
                                 if e.keyCode is Keys.enter
-                                    store = new Store(
-                                        $("#dialog"),
-                                        $("textarea"),
-                                        $("#files"),
-                                        $("#info"),
-                                        $("#save")
-                                    )
+                                    store = edit.store
                                     store.saveFile(
                                         $("#dialog").val(),
                                         $("textarea").val()

@@ -34,6 +34,9 @@
         _results = [];
         for (_i = 0, _len = entries.length; _i < _len; _i++) {
           entry = entries[_i];
+          if (entry.name === "") {
+            continue;
+          }
           li = $("<li/>");
           li.addClass("file");
           link = $("<a/>");
@@ -72,8 +75,6 @@
           text: text
         });
         localStorage["mu_files"] = JSON.stringify(store);
-        this.fileName.val("");
-        this.fileText.val("");
         return this.fileSave.html("Saved");
       };
 
