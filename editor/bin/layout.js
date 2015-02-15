@@ -4,7 +4,7 @@
     var Layout;
     Layout = (function() {
       function Layout() {
-        var ascale, aside, editor, footer, ftext, h, header, height, logo, nav, section, textarea, w, width;
+        var ascale, aside, footer, ftext, h, header, height, lines, logo, nav, section, textarea, w, width;
         console.log("Setting elements in place...");
         nav = $("nav");
         header = $("header");
@@ -34,12 +34,18 @@
         width = width - (width * ascale);
         height = height - 24;
         section.width(width).height(height);
-        textarea = section.children()[0];
-        editor = section.children()[1];
+        width = width - 24;
+        lines = $(section.children()[0]).width(24).height(height);
+        textarea = $(section.children()[1]).css({
+          width: width,
+          height: height,
+          left: 24
+        });
+        width = w;
         footer.width(width).height(24).css("left", w * ascale);
         ftext = footer.children()[0];
         $(ftext).css("margin", "8px");
-        return editor;
+        return $(section.children()[1]);
       }
 
       return Layout;

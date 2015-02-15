@@ -8,7 +8,7 @@
     }
   });
 
-  require(["jquery", "layout", "grid", "events"], function($, Layout, Grid, Events) {
+  require(["jquery", "layout", "edit", "events"], function($, Layout, Edit, Events) {
     var phrases;
     phrases = ["ಠ_ಠ"];
     return $(document).ready(function() {
@@ -17,7 +17,7 @@
       $("#load").html(phrases[phrase]);
       go = function() {
         var events;
-        events = new Events(new Grid(new Layout));
+        events = new Events(new Edit(new Layout));
         $("#load").remove();
         $("#app").css("opacity", 1);
         return events.press();

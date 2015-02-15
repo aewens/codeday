@@ -35,14 +35,21 @@ define ["jquery"], ($) ->
             # section
             height = height - 24
             section.width(width).height(height)
-            textarea = section.children()[0]
-            editor   = section.children()[1]
+            width = width - 24
+            lines = $(section.children()[0]).width(24).height(height)
+            textarea = $(section.children()[1]).css({
+                width: width
+                height: height
+                left: 24
+            })
+                        
             
             # footer
+            width = w
             footer.width(width).height(24).css("left", w * ascale)
             ftext = footer.children()[0]
             $(ftext).css("margin", "8px")
             
-            return editor
+            return $(section.children()[1])
             
     return Layout

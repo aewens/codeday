@@ -7,9 +7,9 @@ require.config
 require [
     "jquery",
     "layout",
-    "grid",
+    "edit",
     "events",
-], ($, Layout, Grid, Events) ->
+], ($, Layout, Edit, Events) ->
     phrases = [
         "ಠ_ಠ",
         # "µText",
@@ -22,7 +22,7 @@ require [
         phrase = Math.floor(Math.random() * phrases.length) % phrases.length
         $("#load").html(phrases[phrase])
         go = ->
-            events = new Events(new Grid(new Layout))
+            events = new Events(new Edit(new Layout))
             $("#load").remove()
             $("#app").css("opacity", 1)
             events.press()
