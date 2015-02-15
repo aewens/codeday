@@ -16,9 +16,10 @@
         this.eh = this.$editor.height();
         this.ux = Math.floor(this.ew / this.tw);
         this.uy = Math.floor(this.eh / this.th);
-        this.capX = 0;
-        this.capY = this.ux * this.uy;
-        this.espaces();
+        this.capT = 0;
+        this.capB = this.ux * this.uy;
+        this.cells = [];
+        this.gen(this.ux * this.uy, 0, 0);
         this.cursor = {};
         this.cursor.on = true;
         this.cursor.element = null;
@@ -34,7 +35,7 @@
       Grid.prototype.curse = function() {
         var blink;
         if (this.cursor.element === null) {
-          this.cursor.element = $(this.$editor.children()[0]).addClass("cursor");
+          this.cursor.element = $(this.cells[0].select).addClass("cursor");
           this.fg = this.cursor.fg = this.cursor.element.css("color");
           this.bg = this.cursor.bg = this.cursor.element.css("background-color");
           blink = function() {
@@ -61,36 +62,74 @@
           return setInterval(blink.bind(this), 500);
         } else {
           this.cursor.element.removeClass("cursor");
-          return this.cursor.element = $(".espace[x='" + this.cx + "'][y='" + this.cy + "']").addClass("cursor");
+          return this.cursor.element = $(this.get(this.cx, this.cy).select).addClass("cursor");
         }
       };
 
-      Grid.prototype.espaces = function() {
-        var e, es, _i, _j, _len, _ref, _results;
-        es = (function() {
+      Grid.prototype.gen = function(to, endX, endY) {
+        var c, cell, cs, _i, _j, _len, _ref, _results;
+        cs = (function() {
           _results = [];
-          for (var _i = 0, _ref = (this.ux * this.uy) - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; 0 <= _ref ? _i++ : _i--){ _results.push(_i); }
+          for (var _i = 0, _ref = to - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; 0 <= _ref ? _i++ : _i--){ _results.push(_i); }
           return _results;
         }).apply(this);
-        for (_j = 0, _len = es.length; _j < _len; _j++) {
-          e = es[_j];
-          this.espace();
-          if ((e % this.ux) === this.ux - 1) {
+        for (_j = 0, _len = cs.length; _j < _len; _j++) {
+          c = cs[_j];
+          cell = this.cell();
+          cell.render();
+          this.cells.push(cell);
+          if ((c % this.ux) === this.ux - 1) {
             this.lx = 0;
             this.ly = this.ly + 1;
           } else {
             this.lx = this.lx + 1;
           }
         }
-        this.cx = 0;
-        return this.cy = 0;
+        this.cx = endX;
+        return this.cy = endY;
       };
 
-      Grid.prototype.espace = function() {
-        return this.make("div", editor).width(10).height(25).addClass("espace").attr("x", this.lx).attr("y", this.ly).css({
-          top: this.ly * this.uy,
-          left: this.lx * this.tw
-        });
+      Grid.prototype.get = function(x, y) {
+        var c, cell, ret, _ref;
+        ret = null;
+        _ref = this.cells;
+        for (c in _ref) {
+          cell = _ref[c];
+          if (cell.x === x && y === cell.y) {
+            ret = cell;
+          }
+        }
+        return ret;
+      };
+
+      Grid.prototype.cell = function() {
+        var a;
+        a = this;
+        return {
+          empty: true,
+          x: a.lx,
+          y: a.ly,
+          cursor: false,
+          select: ".cell[x='" + a.lx + "'][y='" + a.ly + "']",
+          render: function() {
+            return a.make("div", editor).width(10).height(25).addClass("cell").attr("x", a.lx).attr("y", a.ly).css({
+              top: a.ly * a.uy,
+              left: a.lx * a.tw
+            });
+          }
+        };
+      };
+
+      Grid.prototype.move = function(pos) {
+        var x, y;
+        x = pos % this.ux;
+        y = Math.floor(pos / this.ux);
+        if (y > this.ly) {
+          this.cell(this.ux, 0, this.ly + 1);
+        }
+        this.cx = x;
+        this.cy = y;
+        return this.curse();
       };
 
       Grid.prototype.type = function(pos, val) {
@@ -100,17 +139,28 @@
         this.cursor.element.text(val);
         this.cursor.element.css("color", this.fg);
         this.cursor.element.css("background", this.bg);
+        if (y < this.capX) {
+          this.capT = this.capT - this.ux;
+          this.capB = this.capB - this.capT;
+          this.$editor.css("margin-top", this.capT);
+          this.cx = x;
+        }
+        if (y > this.capB) {
+          this.gen(this.ux, 0, this.ly + 1);
+          this.capT = this.ux;
+          this.capB = this.capB + this.capT;
+          this.$editor.css("margin-top", -this.capT);
+        }
         if (x > this.ux) {
           this.lx = this.cx = 0;
           this.ly = this.cy = y;
-          this.espace();
-          return this.curse();
+          this.cell();
         } else {
           this.lx = this.cx = x;
           this.ly = this.cy = y;
-          this.espace();
-          return this.curse();
+          this.cell();
         }
+        return this.curse();
       };
 
       return Grid;

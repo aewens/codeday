@@ -29,7 +29,7 @@ html {
 .clear {
     clear: both;
 }
-.espace, .cursor {
+.cell, .cursor {
     position: absolute;
     color: #000;
     background: #fff;
@@ -70,9 +70,9 @@ section textarea {
     border: none;
     outline: none;
     resize: none;
-    width: 100%;
-    height: 100%;
-    visibility: hidden;
+    width: 0;
+    height: 0;
+    background: #000;
 }
 section #editor {
     position: absolute;

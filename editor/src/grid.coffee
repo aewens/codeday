@@ -21,18 +21,12 @@ define ["jquery", "mods/dom"], ($, Dom) ->
             @eh = @$editor.height()
             @ux = Math.floor(@ew / @tw)
             @uy = Math.floor(@eh / @th)
-            @capX = 0
-            @capY = @ux * @uy
+            @capT = 0
+            @capB = @ux * @uy
             
-            # Initialize first eline
-            # @make("div", editor)
-            #     .width(@ux * @tw)  
-            #     .height(@th) 
-            #     .addClass("eline")
-            #     .attr("line", @ly)
-            #     .css({top: (@ly * @uy), left: (@lx * @ux)})
-            #     .append(@espace()) # Initialize first espace
-            @espaces() # Initialize first espace
+            @cells = []
+            
+            @gen(@ux * @uy, 0, 0) # Initialize first espace
                 
             # Create cursor
             @cursor = {}
@@ -45,7 +39,7 @@ define ["jquery", "mods/dom"], ($, Dom) ->
             $((new Dom).create(here).into(there).element)
         curse: ->
             if @cursor.element is null
-                @cursor.element = $(@$editor.children()[0]).addClass("cursor")
+                @cursor.element = $(@cells[0].select).addClass("cursor")
                 @fg = @cursor.fg = @cursor.element.css("color")
                 @bg = @cursor.bg = @cursor.element.css("background-color")
                 blink = ->
@@ -68,46 +62,77 @@ define ["jquery", "mods/dom"], ($, Dom) ->
                 setInterval(blink.bind(@), 500)
             else
                 @cursor.element.removeClass("cursor")
-                @cursor.element = $(".espace[x='#{@cx}'][y='#{@cy}']")
-                                    .addClass("cursor")
-        espaces: ->
-            es = [0..(@ux*@uy)-1]
-            for e in es
-                @espace()
-                if (e % @ux) is @ux - 1
+                @cursor.element = $(@get(@cx, @cy).select).addClass("cursor")
+        gen: (to, endX, endY) ->
+            cs = [0..to-1]
+            for c in cs
+                cell = @cell()
+                cell.render()
+                @cells.push cell
+                if (c % @ux) is @ux - 1
                     @lx = 0
                     @ly = @ly + 1
                 else
                     @lx = @lx + 1
-            @cx = 0
-            @cy = 0
-        espace: ->
-            @make("div", editor)
-                .width(10)  # because font-size = 16px
-                .height(25) # because font-size = 16px
-                .addClass("espace")
-                .attr("x", @lx)
-                .attr("y", @ly)
-                .css({top: (@ly * @uy), left: (@lx * @tw)})
+            @cx = endX
+            @cy = endY
+        get: (x, y) ->
+            ret = null
+            for c, cell of @cells
+                if cell.x is x and y is cell.y
+                    ret = cell
+            ret
+        cell: ->
+            a = this
+            return {
+                empty: true
+                x: a.lx
+                y: a.ly
+                cursor: false
+                select: ".cell[x='#{a.lx}'][y='#{a.ly}']"
+                render: ->
+                    a.make("div", editor)
+                        .width(10)  # because font-size = 16px
+                        .height(25) # because font-size = 16px
+                        .addClass("cell")
+                        .attr("x", a.lx)
+                        .attr("y", a.ly)
+                        .css({top: (a.ly * a.uy), left: (a.lx * a.tw)})
+            }
+        move: (pos) ->
+            x = pos % @ux
+            y = Math.floor(pos / @ux)
+            if y > @ly
+                @cell(@ux, 0, @ly + 1)
+                
+            @cx = x
+            @cy = y
+            @curse()
         type: (pos, val) ->
             x = pos % @ux
             y = Math.floor(pos / @ux)
             @cursor.element.text(val)
             @cursor.element.css("color", @fg)
             @cursor.element.css("background", @bg)
-            # if y < @capX
-                
-            # if y > @capY 
+            if y < @capX
+                @capT = @capT - @ux
+                @capB = @capB - @capT
+                @$editor.css("margin-top", @capT)
+                @cx = x
+                # @cy = 
+            if y > @capB
+                @gen(@ux, 0, @ly + 1)
+                @capT = @ux
+                @capB = @capB + @capT
+                @$editor.css("margin-top", -@capT)
             if x > @ux
                 @lx = @cx = 0
                 @ly = @cy = y
-                @espace()
-                @curse()
+                @cell()
             else
                 @lx = @cx = x
                 @ly = @cy = y
-                @espace()
-                @curse()
-                
-    
+                @cell()
+            @curse()
+            
     return Grid

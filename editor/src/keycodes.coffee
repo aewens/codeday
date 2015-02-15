@@ -65,7 +65,7 @@ define ->
         "f13":     124
         "semi":    186
         "equals":  187
-        "comma":   187
+        "comma":   188
         "minus":   189
         "period":  190
         "slash":   191
