@@ -10,6 +10,20 @@ require [
     "grid",
     "events",
 ], ($, Layout, Grid, Events) ->
+    phrases = [
+        "ಠ_ಠ",
+        # "µText",
+        # "Loading",
+        # "Installing malware",
+        # "Hacking the FBI",
+        # "Always watching"
+    ]
     $(document).ready ->
-        events = new Events(new Grid(new Layout))
-        events.press()
+        phrase = Math.floor(Math.random() * phrases.length) % phrases.length
+        $("#load").html(phrases[phrase])
+        go = ->
+            events = new Events(new Grid(new Layout))
+            $("#load").remove()
+            $("#app").css("opacity", 1)
+            events.press()
+        setTimeout(go, 100)

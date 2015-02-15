@@ -25,6 +25,7 @@ define ["keys"], (K) ->
                 e.preventDefault()
                 key = e.keyCode
                 self.reload(key)
+                
                 self.type(key) unless self.special[key]
                 K.set(key, true)
             $(document).on "keyup", (e) ->

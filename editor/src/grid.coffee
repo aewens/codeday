@@ -16,11 +16,13 @@ define ["jquery", "mods/dom"], ($, Dom) ->
             @tw = 10 # because font-size = 16px
             @th = 25 # because font-size = 16px
             
-            # Info for espace building
+            # Info for espace navigation
             @ew = @$editor.width()
             @eh = @$editor.height()
             @ux = Math.floor(@ew / @tw)
             @uy = Math.floor(@eh / @th)
+            @capX = 0
+            @capY = @ux * @uy
             
             # Initialize first eline
             # @make("div", editor)
@@ -30,7 +32,7 @@ define ["jquery", "mods/dom"], ($, Dom) ->
             #     .attr("line", @ly)
             #     .css({top: (@ly * @uy), left: (@lx * @ux)})
             #     .append(@espace()) # Initialize first espace
-            @espace() # Initialize first espace
+            @espaces() # Initialize first espace
                 
             # Create cursor
             @cursor = {}
@@ -43,9 +45,7 @@ define ["jquery", "mods/dom"], ($, Dom) ->
             $((new Dom).create(here).into(there).element)
         curse: ->
             if @cursor.element is null
-                @cursor.element = @$editor
-                                    .children()
-                                    .addClass("cursor")
+                @cursor.element = $(@$editor.children()[0]).addClass("cursor")
                 @fg = @cursor.fg = @cursor.element.css("color")
                 @bg = @cursor.bg = @cursor.element.css("background-color")
                 blink = ->
@@ -70,6 +70,17 @@ define ["jquery", "mods/dom"], ($, Dom) ->
                 @cursor.element.removeClass("cursor")
                 @cursor.element = $(".espace[x='#{@cx}'][y='#{@cy}']")
                                     .addClass("cursor")
+        espaces: ->
+            es = [0..(@ux*@uy)-1]
+            for e in es
+                @espace()
+                if (e % @ux) is @ux - 1
+                    @lx = 0
+                    @ly = @ly + 1
+                else
+                    @lx = @lx + 1
+            @cx = 0
+            @cy = 0
         espace: ->
             @make("div", editor)
                 .width(10)  # because font-size = 16px
@@ -83,7 +94,10 @@ define ["jquery", "mods/dom"], ($, Dom) ->
             y = Math.floor(pos / @ux)
             @cursor.element.text(val)
             @cursor.element.css("color", @fg)
-            @cursor.element.css("background", @bg)   
+            @cursor.element.css("background", @bg)
+            # if y < @capX
+                
+            # if y > @capY 
             if x > @ux
                 @lx = @cx = 0
                 @ly = @cy = y
@@ -94,15 +108,6 @@ define ["jquery", "mods/dom"], ($, Dom) ->
                 @ly = @cy = y
                 @espace()
                 @curse()
-            # if y > @ly
-            #     @ly = @cy = y
-            #     @lx = @cx = 0
-            #     @eline()
-            # else if x > @lx
-            #     @lx = @cx = x
-            #     @cy = y
-            #     @espace()
-            #     @cast()
                 
     
     return Grid

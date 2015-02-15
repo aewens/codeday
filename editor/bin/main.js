@@ -9,10 +9,20 @@
   });
 
   require(["jquery", "layout", "grid", "events"], function($, Layout, Grid, Events) {
+    var phrases;
+    phrases = ["ಠ_ಠ"];
     return $(document).ready(function() {
-      var events;
-      events = new Events(new Grid(new Layout));
-      return events.press();
+      var go, phrase;
+      phrase = Math.floor(Math.random() * phrases.length) % phrases.length;
+      $("#load").html(phrases[phrase]);
+      go = function() {
+        var events;
+        events = new Events(new Grid(new Layout));
+        $("#load").remove();
+        $("#app").css("opacity", 1);
+        return events.press();
+      };
+      return setTimeout(go, 100);
     });
   });
 
