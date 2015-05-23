@@ -3,6 +3,8 @@ define ->
         constructor: (@keys) ->
             @down = {}
             @pressed = {}
+            @x = null
+            @y = null
             
             for key of @keys
                 code = @keys[key]
@@ -11,6 +13,14 @@ define ->
                 @pressed[key] = false
             
             self = @
+            
+            canvas = document.querySelector "canvas"
+            rect = canvas.getBoundingClientRect()
+            document.addEventListener "mousemove", (e) ->
+                if e.target is canvas
+                    self.x = e.clientX - rect.left
+                    self.y = e.clientY - rect.top
+            
             document.addEventListener "keydown", (e) ->
                 keyCode = self.keys[e.keyCode]
                 if keyCode

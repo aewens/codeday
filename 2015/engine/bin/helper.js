@@ -6,7 +6,7 @@
 
   window.floor = Math.floor;
 
-  window.atan = Math.atan2;
+  window.atan2 = Math.atan2;
 
   window.atan = Math.atan;
 
@@ -40,6 +40,10 @@
 
   window.sqre = function(x) {
     return Math.pow(x, 2);
+  };
+
+  window.clamp = function(val, min, max) {
+    return Math.min(Math.max(val, min), max);
   };
 
 }).call(this);

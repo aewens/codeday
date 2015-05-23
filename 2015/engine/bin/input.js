@@ -4,10 +4,12 @@
     var InputHandler;
     InputHandler = (function() {
       function InputHandler(keys) {
-        var code, key, self;
+        var canvas, code, key, rect, self;
         this.keys = keys;
         this.down = {};
         this.pressed = {};
+        this.x = null;
+        this.y = null;
         for (key in this.keys) {
           code = this.keys[key];
           this.keys[code] = key;
@@ -15,6 +17,14 @@
           this.pressed[key] = false;
         }
         self = this;
+        canvas = document.querySelector("canvas");
+        rect = canvas.getBoundingClientRect();
+        document.addEventListener("mousemove", function(e) {
+          if (e.target === canvas) {
+            self.x = e.clientX - rect.left;
+            return self.y = e.clientY - rect.top;
+          }
+        });
         document.addEventListener("keydown", function(e) {
           var keyCode;
           keyCode = self.keys[e.keyCode];

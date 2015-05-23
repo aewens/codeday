@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["state", "polygon"], function(State, Polygon) {
+  define(["state", "pappai", "player", "vector"], function(State, Pappai, Player, Vector) {
     var GameState;
     GameState = (function(_super) {
       __extends(GameState, _super);
@@ -12,14 +12,28 @@
         GameState.__super__.constructor.call(this, game);
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
+        this.player = new Player(100, 100, 40, "#f00", true);
+        this.follow = new Player(0, 0, 40, "#ff0", true);
+        this.world = [];
       }
 
-      GameState.prototype.handleInputs = function(input) {};
+      GameState.prototype.handleInputs = function(input) {
+        if (input.x !== null && input.y !== null) {
+          this.follow.real.set(input.x, input.y);
+          return this.follow.logic = new Vector(input.x, input.y);
+        }
+      };
 
-      GameState.prototype.update = function() {};
+      GameState.prototype.update = function() {
+        this.world = [this.player];
+        return this.follow.collide(this.world);
+      };
 
       GameState.prototype.render = function(ctx) {
-        return ctx.clear();
+        ctx.clear();
+        this.follow.real.render();
+        this.player.real.render();
+        return this.follow.real.link(this.player.real);
       };
 
       return GameState;

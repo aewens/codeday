@@ -10,26 +10,51 @@
         this.color = color;
         this.Reecelet = Pappai.Circle(this.r).fg(this.color).set(this.x, this.y);
         this.Ewensian = new Vector(this.x, this.y);
+        this.type = true;
+        this.real = this.Reecelet;
+        this.logic = this.Ewensian;
+        this.collided = false;
+        this;
       }
 
-      Player.prototype.collide = function(ox, oy, x, y) {
-        var c, cond1, cond2, i, j, p, px1, px2, py1, py2, _i, _ref;
-        p = this.points;
-        c = false;
-        j = p.length - 2;
-        for (i = _i = 0, _ref = p.length; _i < _ref; i = _i += 2) {
-          px1 = p[i] + ox;
-          px2 = p[j] + ox;
-          py1 = p[i + 1] + oy;
-          py2 = p[j + 1] + oy;
-          cond1 = (py1 > y) !== (py2 > y);
-          cond2 = x < (px2 - px1) * (y - py1) / (py2 - py1) + px1;
-          if (cond1 && cond2) {
-            c = !c;
+      Player.prototype.collide = function(world) {
+        var ctc, cts, logic, object, objr, objs, objx, objy, real, self, _i, _len, _results;
+        self = this;
+        ctc = function(c, r) {
+          return self.r + r > c.sub(self.logic).mag();
+        };
+        cts = function(x, y, s) {
+          var c, cx, cy, d2;
+          cx = clamp(self.logic.x, x, x + s);
+          cy = clamp(self.logic.y, y, y + s);
+          c = new Vector(cx, cy);
+          d2 = self.logic.sub(c).mag();
+          console.log(d2);
+          return d2 < self.r;
+        };
+        _results = [];
+        for (_i = 0, _len = world.length; _i < _len; _i++) {
+          object = world[_i];
+          logic = object.logic;
+          real = object.real;
+          objx = real.x;
+          objy = real.y;
+          if (real.side != null) {
+            objs = real.side;
           }
-          j = i;
+          if (real.radius != null) {
+            objr = real.radius;
+          }
+          this.collided = object.type ? ctc(logic, objr) : cts(objx, objy, objs);
+          if (this.collided) {
+            this.color = "#0f0";
+            _results.push(this.real.fg(this.color));
+          } else {
+            this.color = "#00f";
+            _results.push(this.real.fg(this.color));
+          }
         }
-        return c;
+        return _results;
       };
 
       return Player;

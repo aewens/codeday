@@ -19,8 +19,7 @@ define ->
             @
         get: (k) -> @[k]
         mid: (x, y) -> [x, y]
-        set: (@x, @y) -> @
-        mset: (@x, @y) ->
+        set: (@x, @y) ->
             xy = @mid(x, y)
             @xx = xy[0]
             @yy = xy[1]

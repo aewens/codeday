@@ -1,7 +1,7 @@
 window.random = Math.random
 window.round  = Math.round
 window.floor  = Math.floor
-window.atan   = Math.atan2
+window.atan2  = Math.atan2
 window.atan   = Math.atan
 window.asin   = Math.asin
 window.acos   = Math.acos
@@ -19,3 +19,5 @@ window.ln     = Math.log
 window.E      = Math.E
 
 window.sqre = (x) -> Math.pow(x, 2)
+window.clamp = (val, min, max) ->
+    Math.min(Math.max(val, min), max)

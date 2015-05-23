@@ -41,12 +41,6 @@
       };
 
       CNode.prototype.set = function(x, y) {
-        this.x = x;
-        this.y = y;
-        return this;
-      };
-
-      CNode.prototype.mset = function(x, y) {
         var xy;
         this.x = x;
         this.y = y;

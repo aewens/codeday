@@ -1,6 +1,7 @@
 define ->
     class Vector
         constructor: (@x, @y) ->
+        use: -> [@x, @y]
         inc: (s) ->
             new Vector(@x + s, @y + s)
         dec: (s) ->
@@ -11,8 +12,14 @@ define ->
             new Vector(@x / s, @y / s)
         add: (v) ->
             new Vector(@x + v.x, @y + v.y)
+        add2: (x, y) ->
+            v = new Vector(x, y)
+            @add(v)
         sub: (v) ->
             new Vector(@x - v.x, @y - v.y)
+        sub2: (x, y) ->
+            v = new Vector(x, y)
+            @sub(v)
         norm: ->
             new Vector(@x / @mag(), @y / @mag())
         mag: ->

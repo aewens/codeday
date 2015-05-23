@@ -8,6 +8,10 @@
         this.y = y;
       }
 
+      Vector.prototype.use = function() {
+        return [this.x, this.y];
+      };
+
       Vector.prototype.inc = function(s) {
         return new Vector(this.x + s, this.y + s);
       };
@@ -28,8 +32,20 @@
         return new Vector(this.x + v.x, this.y + v.y);
       };
 
+      Vector.prototype.add2 = function(x, y) {
+        var v;
+        v = new Vector(x, y);
+        return this.add(v);
+      };
+
       Vector.prototype.sub = function(v) {
         return new Vector(this.x - v.x, this.y - v.y);
+      };
+
+      Vector.prototype.sub2 = function(x, y) {
+        var v;
+        v = new Vector(x, y);
+        return this.sub(v);
       };
 
       Vector.prototype.norm = function() {
