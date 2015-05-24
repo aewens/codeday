@@ -6,9 +6,10 @@ require [
     "gamestate",
     "menustate",
     "endstate",
+    "winstate",
     "input",
     "canvas"
-], (State, GameState, MenuState, EndState, InputHandler, Canvas) ->
+], (State, GameState, MenuState, EndState, WinState, InputHandler, Canvas) ->
     class Game
         constructor: ->
             @canvas = new Canvas 1080, 480
@@ -30,6 +31,7 @@ require [
                 MENU: 1
                 GAME: 2
                 END: 3
+                WIN: 4
             
             @currentState = null
             @nextState = @States.MENU
@@ -47,6 +49,8 @@ require [
                             self.currentState = new GameState self
                         when self.States.END
                             self.currentState = new EndState self
+                        when self.States.WIN
+                            self.currentState = new WinState self
                     self.nextState = self.States.NO_CHANGE
                 
                 self.currentState.handleInputs(self.input)

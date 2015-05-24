@@ -13,7 +13,6 @@
         MenuState.__super__.constructor.call(this, game);
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
-        this.step = 0;
         this.title = Pappai.Text(50).set(325, 128);
         this.enter = Pappai.Text(16).set(440, 256);
       }
@@ -28,13 +27,8 @@
 
       MenuState.prototype.render = function(ctx) {
         ctx.clear();
-        switch (this.step) {
-          case 0:
-            this.title.render("The Reckoning");
-            return this.enter.render("( press enter to enter )");
-          case 1:
-            return console.log(0);
-        }
+        this.title.render("The Reckoning");
+        return this.enter.render("( press enter to enter )");
       };
 
       return MenuState;

@@ -33,7 +33,9 @@ define [
             
             @load()
         lvlup: ->
-            return if @level.current + 1 is @level.max
+            if @level.current + 1 is @level.max
+                @game.nextState = @game.States.WIN
+                return
             @map = @level.next()
             @energy.E = @energy.reset
             @level.mana = @level.mreset
@@ -126,5 +128,5 @@ define [
             @pMana.render("M: " + floor(@player.M))
             @enLeft.render("Energy: " + floor(@energy.E))
             @mnLeft.render("Mana: " + floor(@level.mana))
-            @aiHp.render("AI HP: " + floor(10 * @mobs * ln(@mobs+1)))
+            @aiHp.render("AI HP: " + floor(100 * @mobs))
     return GameState

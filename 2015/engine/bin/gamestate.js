@@ -23,6 +23,7 @@
 
       GameState.prototype.lvlup = function() {
         if (this.level.current + 1 === this.level.max) {
+          this.game.nextState = this.game.States.WIN;
           return;
         }
         this.map = this.level.next();
@@ -150,7 +151,7 @@
         this.pMana.render("M: " + floor(this.player.M));
         this.enLeft.render("Energy: " + floor(this.energy.E));
         this.mnLeft.render("Mana: " + floor(this.level.mana));
-        return this.aiHp.render("AI HP: " + floor(10 * this.mobs * ln(this.mobs + 1)));
+        return this.aiHp.render("AI HP: " + floor(100 * this.mobs));
       };
 
       return GameState;
