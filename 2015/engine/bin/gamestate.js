@@ -3,19 +3,29 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["state", "pappai", "vector", "player", "block", "map"], function(State, Pappai, Vector, Player, Block, Map) {
+  define(["state", "pappai", "vector", "player", "ai", "block", "map"], function(State, Pappai, Vector, Player, AI, Block, Map) {
     var GameState;
     GameState = (function(_super) {
       __extends(GameState, _super);
 
       function GameState(game) {
+        var ai, aix, aiy, i, _i, _ref;
         GameState.__super__.constructor.call(this, game);
-        this.w = this.game.ctx.width;
-        this.h = this.game.ctx.height;
+        this.w = this.game.canvas.ctx.width;
+        this.h = this.game.canvas.ctx.height;
         this.player = new Player(60, this.h - 200, 20, "#00f");
-        this.map = new Map(16, 12, 40);
+        this.map = new Map(27, 12, 40);
         this.map.row(11, "platform");
         this.map.fromR(4, 7, 5, "platform");
+        this.time = 0;
+        this.ais = [];
+        this.a = 0;
+        for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          aix = floor(random() * 800) + 100;
+          aiy = floor(random() * 200);
+          ai = new AI(aix, aiy, 20, "#f00");
+          this.ais.push(ai);
+        }
       }
 
       GameState.prototype.handleInputs = function(input) {
@@ -27,20 +37,52 @@
         }
         if (input.isPressed("spacebar")) {
           if (this.player.canJump) {
-            return this.player.move(0, -40);
+            this.player.move(0, -40);
           }
+        }
+        if (input.isDown("pulse")) {
+          this.player.pulsate = true;
+          return this.player.pulsing = this.player.pulsing + 0.001;
+        } else {
+          this.player.pulsate = false;
+          this.player.pulsing = 0;
+          return this.time = 0;
         }
       };
 
       GameState.prototype.update = function() {
-        this.map.update(this.player);
-        return this.player.update(this.map);
+        var i, j, others, _i, _j, _ref, _ref1, _results;
+        console.log(abs(sin(this.player.pulsing)) * 500);
+        if (this.player.health > 0) {
+          this.map.update(this.player);
+          this.player.update(this.map);
+          _results = [];
+          for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+            others = [];
+            for (j = _j = 0, _ref1 = this.a; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+              if (i !== j) {
+                others.push(this.ais[j]);
+              }
+            }
+            _results.push(this.ais[i].update(this.map, this.player, others));
+          }
+          return _results;
+        } else {
+          return console.log("Oh no :(");
+        }
       };
 
       GameState.prototype.render = function(ctx) {
+        var i, _i, _ref;
         ctx.clear();
         this.player.render();
-        return this.map.render();
+        for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          this.ais[i].render();
+        }
+        this.map.render();
+        if (this.player.pulsate) {
+          return this.player.pulse();
+        }
       };
 
       return GameState;

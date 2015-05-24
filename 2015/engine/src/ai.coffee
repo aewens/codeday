@@ -1,8 +1,9 @@
 define [
     "pappai",
-    "vector"
-], (Pappai, Vector) ->
-    class Player
+    "vector",
+    "player"
+], (Pappai, Vector, Player) ->
+    class AI
         constructor: (@x, @y, @r, @color) ->
             @Reecelet = Pappai.Circle(@r).fg(@color).set(@x, @y)
             @Ewensian = new Vector(@x, @y)
@@ -18,18 +19,9 @@ define [
             @friction = 0.9
             
             @canJump = false
-            @health = 1000
-            
-            opts  =
-                fcolor: "hsla(180, 100%, 50%, 0.5)"
-                scolor: "hsl(200, 100%, 50%)"
-                doStroke: true
-            @pulsar = Pappai.Circle(@r + 5).flag(opts)
-            @pulsate = false
-            @pulsing = 0
         move: (x, y) ->
             @velocity = @velocity.add2(x, y)
-        collide: (map) ->
+        collide: (map, player, others) ->
             w = map.w * map.size
             h = map.h * map.size
             if @logic.x < @r
@@ -50,11 +42,10 @@ define [
                 cy = clamp(self.logic.y, y, y + s)
                 c  = new Vector(cx, cy)
                 d2 = ceil(self.logic.sub(c).mag())
-                # console.log d2, self.r
                 d2 < self.r
                 
             collided = false
-            for object in map.world
+            for object in [player].concat(others).concat(map.world)
                 continue if collided
                 logic = object.logic
                 real = object.real
@@ -68,29 +59,40 @@ define [
                                 cts(objx, objy, objs)
                 @into = object if collided
             @collided = collided
+            if @into instanceof Player
+                player.health = player.health - 1 if player.health > 0
             # if @collided
             #     @real.fg("#ff0")
             # else
             #     @real.fg(@color)
             @collided
-        pulse: ->
-            @pulsar.radius = @real.radius + abs(sin(@pulsing)) * 500
-            @pulsar.set(@logic.x, @logic.y)
-            @pulsar.render()
-        update: (map) ->
-            # @pulsing = 0 if !pulsate
+        update: (map, player, others) ->
+            attract = player.logic.sub(@logic)
+            
+            if attract.mag() < 250
+                lr = if attract.x > 0 then 1 else -1
+                ud = if attract.y < 0 and @canJump then -5 else 0
+                
+                # Hack to fix underground bug
+                ud = if @logic.y >= map.h * map.size - @r * 2 then -20 else ud
+                
+                @velocity = @velocity.add2(lr, ud)
+            else
+                @velocity = new Vector(0, 0)
+            
             @velocity = @velocity.scale(@friction)
             @logic = @logic.add(@gravity).add(@velocity)
             # After future logic
-            if @collide(map)
+            if @collide(map, player, others)
                 dir = @into.logic.sub(@logic).dot(@gravity)
-                if dir >= 39
+                if dir >= 35
                     # gravity = new Vector(0, @velocity.y)
                     @logic = @logic.sub(@gravity)
                     @canJump = true
-                else if dir <= -39
+                else if dir <= -35
                     # Bottom
                 else
+                    @logic = @logic.sub(@velocity).sub(@gravity)
             else
                 @canJump = false
                 
@@ -98,4 +100,4 @@ define [
         render: ->
             @real.render()
 
-    return Player
+    return AI
