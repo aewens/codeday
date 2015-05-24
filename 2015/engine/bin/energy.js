@@ -5,7 +5,9 @@
     Energy = (function() {
       function Energy() {
         this.E = 500;
-        this.reset = 100;
+        this.low = 100;
+        this.reset = 500;
+        this.cap = 9000;
       }
 
       Energy.prototype.calc = function(k, x, m, h, r, p, q) {
@@ -22,8 +24,8 @@
         if (time % 5 === 0) {
           this.E = this.E + 20;
         }
-        if (this.E >= 9000) {
-          return this.E = 9000;
+        if (this.E >= this.cap) {
+          return this.E = this.cap;
         }
       };
 

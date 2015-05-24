@@ -101,7 +101,7 @@ define [
                 @velocity = @velocity.scale(@friction)
                 @logic = @logic.add(@gravity).add(@velocity)
                 
-                @pulse(energy) if @pulsate and energy.E > energy.reset
+                @pulse(energy) if @pulsate and energy.E > energy.low
                 
                 # After future logic
                 if @collide(map)

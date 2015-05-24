@@ -126,7 +126,7 @@
           }
           this.velocity = this.velocity.scale(this.friction);
           this.logic = this.logic.add(this.gravity).add(this.velocity);
-          if (this.pulsate && energy.E > energy.reset) {
+          if (this.pulsate && energy.E > energy.low) {
             this.pulse(energy);
           }
           if (this.collide(map)) {

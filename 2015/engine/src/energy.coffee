@@ -5,7 +5,9 @@ define [
         # E = k(xmh/r^(p-q))
         constructor: ->
             @E = 500
-            @reset = 100
+            @low = 100
+            @reset = 500
+            @cap = 9000
         calc: (k, x, m, h, r, p, q) ->
             total = (k * x * m * h) / (pow(r, p - q))
             @E = @E - total
@@ -13,6 +15,6 @@ define [
             total
         update: (time) ->
             @E = @E + 20 if time % 5 is 0
-            @E = 9000 if @E >= 9000
+            @E = @cap if @E >= @cap
         
     return Energy

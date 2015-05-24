@@ -34,6 +34,9 @@ define [
         lvlup: ->
             return if @level.current + 1 is @level.max
             @map = @level.next()
+            @energy.E = @energy.reset
+            @health = Pappai.Text().set(20, 20)
+            @atLevel = Pappai.Text().set(@map.w * @map.size - 20, 20)
             @load()
         load: ->
             @ais = []
@@ -47,6 +50,10 @@ define [
                 @ais.push ai
                 
             @player = new Player(60, @h - 200, 20, @mobs, "#00f")
+            
+            @health = Pappai.Text().set(20, 20)
+            @atLevel = Pappai.Text().set(20, 40)
+            @enLeft = Pappai.Text().set(20, 60)
         handleInputs: (input) ->
             # if input.x != null and input.y != null
             #     @player.real.set(input.x, input.y)
@@ -85,7 +92,12 @@ define [
             @player.render()
             @ais[i].render() for i in [0...@mobs]
             @map.render()
-            if @player.pulsate and @energy.E > @energy.reset
+            if @player.pulsate and @energy.E > @energy.low
                 @player.pulsar.set(@player.logic.x, @player.logic.y)
                 @player.pulsar.render()
+            life = floor(@player.health)
+            life = if life > 0 then life else "Dead"
+            @health.render("HP: " + life)
+            @atLevel.render("Level: " + floor(@level.current + 1))
+            @enLeft.render("Energy: " + floor(@energy.E))
     return GameState

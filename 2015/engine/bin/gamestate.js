@@ -25,6 +25,9 @@
           return;
         }
         this.map = this.level.next();
+        this.energy.E = this.energy.reset;
+        this.health = Pappai.Text().set(20, 20);
+        this.atLevel = Pappai.Text().set(this.map.w * this.map.size - 20, 20);
         return this.load();
       };
 
@@ -39,7 +42,10 @@
           ai = new AI(aix, aiy, 20, this.mobs, "#f00");
           this.ais.push(ai);
         }
-        return this.player = new Player(60, this.h - 200, 20, this.mobs, "#00f");
+        this.player = new Player(60, this.h - 200, 20, this.mobs, "#00f");
+        this.health = Pappai.Text().set(20, 20);
+        this.atLevel = Pappai.Text().set(20, 40);
+        return this.enLeft = Pappai.Text().set(20, 60);
       };
 
       GameState.prototype.handleInputs = function(input) {
@@ -96,17 +102,22 @@
       };
 
       GameState.prototype.render = function(ctx) {
-        var i, _i, _ref;
+        var i, life, _i, _ref;
         ctx.clear();
         this.player.render();
         for (i = _i = 0, _ref = this.mobs; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           this.ais[i].render();
         }
         this.map.render();
-        if (this.player.pulsate && this.energy.E > this.energy.reset) {
+        if (this.player.pulsate && this.energy.E > this.energy.low) {
           this.player.pulsar.set(this.player.logic.x, this.player.logic.y);
-          return this.player.pulsar.render();
+          this.player.pulsar.render();
         }
+        life = floor(this.player.health);
+        life = life > 0 ? life : "Dead";
+        this.health.render("HP: " + life);
+        this.atLevel.render("Level: " + floor(this.level.current + 1));
+        return this.enLeft.render("Energy: " + floor(this.energy.E));
       };
 
       return GameState;

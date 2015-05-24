@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(function() {
-    var CBox, CCircle, CNode, CSquare, Pappai;
+    var CBox, CCircle, CNode, CSquare, CText, Pappai;
     CNode = (function() {
       function CNode() {
         this.PAPER = document.getElementById("pappai");
@@ -184,6 +184,35 @@
       return CSquare;
 
     })(CNode);
+    CText = (function(_super) {
+      __extends(CText, _super);
+
+      function CText(Pappai, font, size) {
+        this.give("font", font);
+        this.give("size", size);
+        CText.__super__.constructor.apply(this, arguments);
+      }
+
+      CText.prototype.mid = function(x, y) {
+        return [x, y];
+      };
+
+      CText.prototype.render = function(words) {
+        var font, size, _ref, _ref1;
+        font = (_ref = this.font) != null ? _ref : "Helvetica Neue";
+        size = (_ref1 = this.size) != null ? _ref1 : 16;
+        this.PAPER.style.backgroundColor = this.bcolor;
+        this.PAINT.font = "" + size + "pt " + font;
+        this.PAINT.fillStyle = this.fcolor;
+        this.PAINT.beginPath();
+        this.PAINT.fillText(words, this.x, this.y);
+        this.PAINT.closePath();
+        return this;
+      };
+
+      return CText;
+
+    })(CNode);
     Pappai = {
       Init: function(width, height, theater) {
         var body, canvas, html, xm, ym;
@@ -228,6 +257,9 @@
       },
       Square: function(side) {
         return new CSquare(this, side);
+      },
+      Text: function(font, size) {
+        return new CText(this, font, size);
       }
     };
     return Pappai;

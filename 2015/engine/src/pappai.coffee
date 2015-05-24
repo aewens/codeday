@@ -105,7 +105,24 @@ define ->
             @PAINT.fill() unless @noFill
             @PAINT.stroke() if @doStroke
             @
-
+            
+    class CText extends CNode
+        constructor: (Pappai, font, size) ->
+            @give("font", font)
+            @give("size", size)
+            super
+        mid: (x, y) -> [x, y]
+        render: (words) ->
+            font = @font ? "Helvetica Neue"
+            size = @size ? 16
+            @PAPER.style.backgroundColor = @bcolor
+            @PAINT.font = "#{size}pt #{font}"
+            @PAINT.fillStyle = @fcolor
+            @PAINT.beginPath()
+            @PAINT.fillText(words, @x, @y)
+            @PAINT.closePath()
+            @
+            
     Pappai =
         Init: (width, height, theater) ->
             canvas = document.createElement("canvas")
@@ -140,5 +157,6 @@ define ->
         Circle: (radius) -> new CCircle(@, radius)
         Box: (width, height) -> new CBox(@, width, height)
         Square: (side) -> new CSquare(@, side)
+        Text: (font, size) -> new CText(@, font, size)
             
     return Pappai

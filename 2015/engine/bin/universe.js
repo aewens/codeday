@@ -11,14 +11,16 @@
       Universe.prototype.update = function(time, ais, player) {
         var everything, object, snap, _i, _j, _len, _len1, _results;
         everything = [player].concat(ais);
-        if (this.energy.E < this.energy.reset) {
+        if (this.energy.E < this.energy.low) {
           for (_i = 0, _len = everything.length; _i < _len; _i++) {
             object = everything[_i];
-            snap = this.snapshots[object.name];
-            object.logic = snap.pos;
-            object.velocity = snap.vel;
-            object.health = snap.life;
-            object.dead = snap.revive;
+            if (this.snapshots[object.name] != null) {
+              snap = this.snapshots[object.name];
+              object.logic = snap.pos;
+              object.velocity = snap.vel;
+              object.health = snap.life;
+              object.dead = snap.revive;
+            }
           }
         }
         if (time % 256 === 0 || Object.keys(this.snapshots).length === 0) {
