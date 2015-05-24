@@ -3,11 +3,12 @@
   define(["pappai", "vector"], function(Pappai, Vector) {
     var Player;
     Player = (function() {
-      function Player(x, y, r, color) {
+      function Player(x, y, r, difficulty, color) {
         var opts;
         this.x = x;
         this.y = y;
         this.r = r;
+        this.difficulty = difficulty;
         this.color = color;
         this.Reecelet = Pappai.Circle(this.r).fg(this.color).set(this.x, this.y);
         this.Ewensian = new Vector(this.x, this.y);
@@ -22,8 +23,9 @@
         this.velocity = new Vector(0, 0);
         this.friction = 0.9;
         this.canJump = false;
-        this.health = 100;
+        this.health = 100 + ln(this.difficulty + 1) * 10;
         this.damage = 0;
+        this.dead = false;
         opts = {
           fcolor: "hsla(180, 100%, 50%, 0.5)",
           scolor: "hsl(200, 100%, 50%)",
@@ -112,25 +114,39 @@
 
       Player.prototype.update = function(map, energy) {
         var dir;
-        this.velocity = this.velocity.scale(this.friction);
-        this.logic = this.logic.add(this.gravity).add(this.velocity);
-        if (this.pulsate && energy.E > energy.reset) {
-          this.pulse(energy);
-        }
-        if (this.collide(map)) {
-          dir = this.into.logic.sub(this.logic).dot(this.gravity);
-          if (dir >= 39) {
-            this.logic = this.logic.sub(this.gravity);
-            this.canJump = true;
-          } else if (dir <= -39) {
-
-          } else {
-
+        if (this.health > 0) {
+          if (this.time % 100 === 0) {
+            this.health = this.health + 1;
           }
+          if (this.real.get("fcolor") !== this.color) {
+            this.real.fg(this.color);
+          }
+          if (this.dead) {
+            this.dead = false;
+          }
+          this.velocity = this.velocity.scale(this.friction);
+          this.logic = this.logic.add(this.gravity).add(this.velocity);
+          if (this.pulsate && energy.E > energy.reset) {
+            this.pulse(energy);
+          }
+          if (this.collide(map)) {
+            dir = this.into.logic.sub(this.logic).dot(this.gravity);
+            if (dir >= 39) {
+              this.logic = this.logic.sub(this.gravity);
+              this.canJump = true;
+            } else if (dir <= -39) {
+
+            } else {
+
+            }
+          } else {
+            this.canJump = false;
+          }
+          return this.real.set(this.logic.x, this.logic.y);
         } else {
-          this.canJump = false;
+          this.dead = true;
+          return this.real.fg("hsla(0, 0%, 0%, 0.5)");
         }
-        return this.real.set(this.logic.x, this.logic.y);
       };
 
       Player.prototype.render = function() {

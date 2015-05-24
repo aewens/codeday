@@ -3,7 +3,7 @@ define [
     "vector"
 ], (Pappai, Vector) ->
     class Player
-        constructor: (@x, @y, @r, @color) ->
+        constructor: (@x, @y, @r, @difficulty, @color) ->
             @Reecelet = Pappai.Circle(@r).fg(@color).set(@x, @y)
             @Ewensian = new Vector(@x, @y)
             @type = true # Circle
@@ -20,8 +20,9 @@ define [
             @friction = 0.9
             
             @canJump = false
-            @health = 100
+            @health = 100 + ln(@difficulty+1) * 10
             @damage = 0
+            @dead = false
             
             opts  =
                 fcolor: "hsla(180, 100%, 50%, 0.5)"
@@ -91,26 +92,34 @@ define [
                     q: 0
                 @damage = energy.calc(@E.k, @E.x, @E.m, @E.h, @E.r, @E.p, @E.q)
         update: (map, energy) ->
-            # @pulsing = 0 if !pulsate
-            @velocity = @velocity.scale(@friction)
-            @logic = @logic.add(@gravity).add(@velocity)
-            
-            @pulse(energy) if @pulsate and energy.E > energy.reset
-            
-            # After future logic
-            if @collide(map)
-                dir = @into.logic.sub(@logic).dot(@gravity)
-                if dir >= 39
-                    # gravity = new Vector(0, @velocity.y)
-                    @logic = @logic.sub(@gravity)
-                    @canJump = true
-                else if dir <= -39
-                    # Bottom
-                else
-            else
-                @canJump = false
+            if @health > 0
+                # console.log @health
+                @health = @health + 1 if @time % 100 is 0
+                @real.fg(@color) if @real.get("fcolor") != @color
+                @dead = false if @dead
                 
-            @real.set(@logic.x, @logic.y)
+                @velocity = @velocity.scale(@friction)
+                @logic = @logic.add(@gravity).add(@velocity)
+                
+                @pulse(energy) if @pulsate and energy.E > energy.reset
+                
+                # After future logic
+                if @collide(map)
+                    dir = @into.logic.sub(@logic).dot(@gravity)
+                    if dir >= 39
+                        # gravity = new Vector(0, @velocity.y)
+                        @logic = @logic.sub(@gravity)
+                        @canJump = true
+                    else if dir <= -39
+                        # Bottom
+                    else
+                else
+                    @canJump = false
+                    
+                @real.set(@logic.x, @logic.y)
+            else
+                @dead = true
+                @real.fg("hsla(0, 0%, 0%, 0.5)")
         render: ->
             @real.render()
 

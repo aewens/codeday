@@ -3,10 +3,11 @@
   define(["pappai", "vector", "player"], function(Pappai, Vector, Player) {
     var AI;
     AI = (function() {
-      function AI(x, y, r, color) {
+      function AI(x, y, r, difficulty, color) {
         this.x = x;
         this.y = y;
         this.r = r;
+        this.difficulty = difficulty;
         this.color = color;
         this.Reecelet = Pappai.Circle(this.r).fg(this.color).set(this.x, this.y);
         this.Ewensian = new Vector(this.x, this.y);
@@ -15,12 +16,13 @@
         this.logic = this.Ewensian;
         this.collided = false;
         this.into = null;
+        this.name = random().toString(36).substr(2, 8);
         this.G = 5;
         this.gravity = new Vector(0, this.G);
         this.velocity = new Vector(0, 0);
         this.friction = 0.9;
         this.canJump = false;
-        this.health = 10;
+        this.health = 10 * this.difficulty * ln(this.difficulty + 1);
         this.dead = false;
       }
 
@@ -103,6 +105,9 @@
           if (this.real.get("fcolor") !== this.color) {
             this.real.fg(this.color);
           }
+          if (this.dead) {
+            this.dead = false;
+          }
           attract = player.logic.sub(this.logic);
           if (attract.mag() < 250) {
             lr = attract.x > 0 ? 1 : -1;
@@ -122,7 +127,7 @@
             } else if (dir <= -35) {
 
             } else {
-              this.logic = this.logic.sub(this.velocity).sub(this.gravity);
+              this.logic = this.logic.sub(this.velocity);
             }
           } else {
             this.canJump = false;

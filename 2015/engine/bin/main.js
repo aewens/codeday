@@ -19,7 +19,8 @@
           left: 65,
           right: 68,
           pulse: 74,
-          spacebar: 32
+          spacebar: 32,
+          skip: 76
         });
         this.canvas.ctx.strokeStyle = "#fff";
         this.currentState = null;

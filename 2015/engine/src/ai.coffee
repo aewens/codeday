@@ -4,7 +4,7 @@ define [
     "player"
 ], (Pappai, Vector, Player) ->
     class AI
-        constructor: (@x, @y, @r, @color) ->
+        constructor: (@x, @y, @r, @difficulty, @color) ->
             @Reecelet = Pappai.Circle(@r).fg(@color).set(@x, @y)
             @Ewensian = new Vector(@x, @y)
             @type = true # Circle
@@ -13,13 +13,15 @@ define [
             @collided = false
             @into = null
             
+            @name = random().toString(36).substr(2, 8)
+            
             @G = 5
             @gravity = new Vector(0, @G)
             @velocity = new Vector(0, 0)
             @friction = 0.9
             
             @canJump = false
-            @health = 10
+            @health = 10 * @difficulty * ln(@difficulty+1)
             @dead = false
         move: (x, y) ->
             @velocity = @velocity.add2(x, y)
@@ -78,6 +80,7 @@ define [
         update: (map, player, others) ->
             if @health > 0
                 @real.fg(@color) if @real.get("fcolor") != @color
+                @dead = false if @dead
                 
                 attract = player.logic.sub(@logic)
                 if attract.mag() < 250
@@ -103,7 +106,7 @@ define [
                     else if dir <= -35
                         # Bottom
                     else
-                        @logic = @logic.sub(@velocity).sub(@gravity)
+                        @logic = @logic.sub(@velocity)
                 else
                     @canJump = false
                 @real.set(@logic.x, @logic.y)

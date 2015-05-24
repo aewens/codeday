@@ -18,6 +18,7 @@
             object.logic = snap.pos;
             object.velocity = snap.vel;
             object.health = snap.life;
+            object.dead = snap.revive;
           }
         }
         if (time % 256 === 0 || Object.keys(this.snapshots).length === 0) {
@@ -28,7 +29,8 @@
             snap = {
               pos: object.logic,
               vel: object.velocity,
-              life: object.health
+              life: object.health,
+              revive: object.dead
             };
             _results.push(this.snapshots[object.name] = snap);
           }

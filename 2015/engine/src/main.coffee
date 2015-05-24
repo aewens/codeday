@@ -22,7 +22,7 @@ require [
                 right:    68
                 pulse:    74
                 spacebar: 32
-                # up:       87
+                skip:     76
             
             @canvas.ctx.strokeStyle = "#fff"
             

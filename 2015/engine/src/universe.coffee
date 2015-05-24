@@ -12,6 +12,7 @@ define [
                     object.logic = snap.pos
                     object.velocity = snap.vel
                     object.health = snap.life
+                    object.dead = snap.revive
                     # object.E = snap.E if object.E?
             if time % 256 is 0 or Object.keys(@snapshots).length is 0
                 @snapshots = {}
@@ -20,6 +21,7 @@ define [
                         pos: object.logic
                         vel: object.velocity
                         life: object.health
+                        revive: object.dead
                     # snap.E = object.E if object.E?
                     @snapshots[object.name] = snap
             

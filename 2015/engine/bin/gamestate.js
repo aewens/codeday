@@ -3,33 +3,44 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["state", "pappai", "vector", "player", "ai", "block", "map", "energy", "universe"], function(State, Pappai, Vector, Player, AI, Block, Map, Energy, Universe) {
+  define(["state", "pappai", "vector", "player", "ai", "block", "map", "level", "energy", "universe"], function(State, Pappai, Vector, Player, AI, Block, Map, Level, Energy, Universe) {
     var GameState;
     GameState = (function(_super) {
       __extends(GameState, _super);
 
       function GameState(game) {
-        var ai, aix, aiy, i, _i, _ref;
         GameState.__super__.constructor.call(this, game);
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
-        this.player = new Player(60, this.h - 200, 20, "#00f");
-        this.map = new Map(27, 12, 40);
-        this.map.row(11, "platform");
-        this.map.fromR(4, 7, 5, "platform");
-        this.map.fromR(16, 4, 5, "platform");
+        this.level = new Level(27, 12, 40);
+        this.map = this.level.start();
         this.time = 0;
         this.energy = new Energy();
         this.universe = new Universe(this.energy);
+        this.load();
+      }
+
+      GameState.prototype.lvlup = function() {
+        if (this.level.current + 1 === this.level.max) {
+          return;
+        }
+        this.map = this.level.next();
+        return this.load();
+      };
+
+      GameState.prototype.load = function() {
+        var ai, aix, aiy, i, _i, _ref;
         this.ais = [];
-        this.a = 1;
-        for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        this.mobs = pow(2, this.level.current);
+        this.dead_ais = [];
+        for (i = _i = 0, _ref = this.mobs; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           aix = floor(random() * 800) + 100;
           aiy = floor(random() * 200);
-          ai = new AI(aix, aiy, 20, "#f00");
+          ai = new AI(aix, aiy, 20, this.mobs, "#f00");
           this.ais.push(ai);
         }
-      }
+        return this.player = new Player(60, this.h - 200, 20, this.mobs, "#00f");
+      };
 
       GameState.prototype.handleInputs = function(input) {
         if (input.isDown("left")) {
@@ -44,35 +55,43 @@
           }
         }
         if (input.isDown("pulse")) {
-          this.player.pulsate = true;
-          return this.player.pulsing = this.player.pulsing + 0.001;
+          if (!this.player.dead) {
+            this.player.pulsate = true;
+            this.player.pulsing = this.player.pulsing + 0.001;
+          }
         } else {
           this.player.pulsate = false;
-          return this.player.pulsing = 0;
+          this.player.pulsing = 0;
+        }
+        if (input.isPressed("skip")) {
+          return this.lvlup();
         }
       };
 
       GameState.prototype.update = function() {
-        var i, j, others, _i, _j, _ref, _ref1, _results;
-        if (this.player.health > 0) {
-          this.time = (this.time + 1) % 10000;
-          this.energy.update(this.time);
-          this.universe.update(this.time, this.ais, this.player);
-          this.map.update(this.player);
-          this.player.update(this.map, this.energy);
-          _results = [];
-          for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-            others = [];
-            for (j = _j = 0, _ref1 = this.a; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
-              if (i !== j) {
-                others.push(this.ais[j]);
-              }
-            }
-            _results.push(this.ais[i].update(this.map, this.player, others));
+        var i, j, others, _i, _j, _ref, _ref1;
+        this.time = (this.time + 1) % 10000;
+        this.energy.update(this.time);
+        this.universe.update(this.time, this.ais, this.player);
+        this.map.update(this.player);
+        this.player.update(this.map, this.energy);
+        for (i = _i = 0, _ref = this.mobs; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          if (this.ais[i].dead) {
+            continue;
           }
-          return _results;
-        } else {
-          return console.log("Oh no :(");
+          others = [];
+          for (j = _j = 0, _ref1 = this.mobs; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+            if (i !== j) {
+              others.push(this.ais[j]);
+            }
+          }
+          this.ais[i].update(this.map, this.player, others);
+          if (this.ais[i].dead) {
+            this.dead_ais.push(this.ais[i]);
+          }
+        }
+        if (this.dead_ais.length === this.ais.length) {
+          return this.lvlup();
         }
       };
 
@@ -80,7 +99,7 @@
         var i, _i, _ref;
         ctx.clear();
         this.player.render();
-        for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        for (i = _i = 0, _ref = this.mobs; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           this.ais[i].render();
         }
         this.map.render();
