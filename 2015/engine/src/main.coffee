@@ -20,6 +20,7 @@ require [
                 mana:     75
                 spacebar: 32
                 skip:     76
+                heal:     73
                 enter:    13
             
             @canvas.ctx.strokeStyle = "#fff"

@@ -2,14 +2,14 @@ define [
     "state", 
     "pappai",
     "vector",
-    "player",
     "skill",
+    "prophet",
     "ai",
     "block",
     "level",
     "energy",
     "universe"
-], (State, Pappai, Vector, Player, Skill, 
+], (State, Pappai, Vector, Skill, Prophet,
     AI, Block, Level, Energy, Universe) ->
     class GameState extends State
         constructor: (@game) ->
@@ -50,7 +50,7 @@ define [
                 @ais.push ai
                 
             @player = new Skill(60, @h - 200, 20, @mobs, "#00f")
-            @player.stats(100, 1, 1, 2, 0, 10)
+            @player.stats(100, 2, 1, 2, 0, 10)
             
             @health = Pappai.Text(10).set(20, 20)
             @atLevel = Pappai.Text(10).set(20, 35)
@@ -58,6 +58,7 @@ define [
             @pMana = Pappai.Text(10).set(20, 65)
             @enLeft = Pappai.Text(10).set(20, 80)
             @mnLeft = Pappai.Text(10).set(20, 95)
+            @aiHp = Pappai.Text(10).set(20, 110)
         handleInputs: (input) ->
             # if input.x != null and input.y != null
             #     @player.real.set(input.x, input.y)
@@ -68,6 +69,7 @@ define [
                 @player.move(1, 0)
             if input.isPressed("spacebar")
                 @player.move(0, -40) if @player.canJump
+                
             if input.isDown("pulse") and !input.isDown("mana")
                 unless @player.dead
                     @player.pulsate = true
@@ -84,6 +86,10 @@ define [
                 @player.mpulsate = false
                 @player.mpulsing = 0
                 
+            if input.isPressed("heal")
+                return unless @player.heal()?
+                if @player.M > 10 and @player.health > 10
+                    @player.swap()
             if input.isPressed("skip") then @lvlup()
         update: ->
             @game.nextState = @game.States.END if @player.dead
@@ -120,4 +126,5 @@ define [
             @pMana.render("M: " + floor(@player.M))
             @enLeft.render("Energy: " + floor(@energy.E))
             @mnLeft.render("Mana: " + floor(@level.mana))
+            @aiHp.render("AI HP: " + floor(10 * @mobs * ln(@mobs+1)))
     return GameState

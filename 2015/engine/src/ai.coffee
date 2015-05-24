@@ -83,7 +83,7 @@ define [
                 @dead = false if @dead
                 
                 attract = player.logic.sub(@logic)
-                if attract.mag() < 250
+                if attract.mag() < 300
                     lr = if attract.x > 0 then 1 else -1
                     ud = if attract.y < 0 and @canJump then -5 else 0
                     
@@ -106,7 +106,7 @@ define [
                     else if dir <= -35
                         # Bottom
                     else
-                        @logic = @logic.sub(@velocity)
+                        @logic = @logic.sub(@velocity)#.sub(@gravity)
                 else
                     @canJump = false
                 @real.set(@logic.x, @logic.y)

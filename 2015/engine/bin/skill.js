@@ -5,7 +5,7 @@
 
   define(["player", "pappai"], function(Player, Pappai) {
     var Skill;
-    return Skill = (function(_super) {
+    Skill = (function(_super) {
       __extends(Skill, _super);
 
       function Skill(x, y, r, difficulty, color) {
@@ -116,6 +116,7 @@
       return Skill;
 
     })(Player);
+    return Skill;
   });
 
 }).call(this);

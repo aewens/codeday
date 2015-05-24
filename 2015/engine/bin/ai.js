@@ -109,7 +109,7 @@
             this.dead = false;
           }
           attract = player.logic.sub(this.logic);
-          if (attract.mag() < 250) {
+          if (attract.mag() < 300) {
             lr = attract.x > 0 ? 1 : -1;
             ud = attract.y < 0 && this.canJump ? -5 : 0;
             ud = this.logic.y >= map.h * map.size - this.r * 2 ? -20 : ud;

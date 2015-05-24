@@ -66,3 +66,5 @@ define [
             @mpulse(level) if @mpulsate
         render: ->
             super
+            
+    return Skill

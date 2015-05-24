@@ -4,10 +4,10 @@
     var Energy;
     Energy = (function() {
       function Energy() {
-        this.E = 500;
+        this.E = 300;
         this.low = 100;
-        this.reset = 500;
-        this.cap = 9000;
+        this.reset = 300;
+        this.cap = 1000;
       }
 
       Energy.prototype.check = function(k, x, m, h, r, p, q) {
@@ -26,7 +26,7 @@
 
       Energy.prototype.update = function(time) {
         if (time % 5 === 0) {
-          this.E = this.E + 20;
+          this.E = this.E + 10;
         }
         if (this.E >= this.cap) {
           return this.E = this.cap;
