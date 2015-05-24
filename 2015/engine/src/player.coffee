@@ -78,19 +78,19 @@ define [
             # else
             #     @real.fg(@color)
             @collided
-        pulse: (energy) ->
-            @pulsar.radius = @real.radius + abs(sin(@pulsing)) * 500
-            # E = k(xmh/r^(p-q))
-            if floor(@pulsing * 100) % 5 is 0
-                @E = 
-                    k: 100
-                    x: 1
-                    m: 1
-                    h: @health
-                    r: @pulsar.radius
-                    p: 2
-                    q: 0
-                @damage = energy.calc(@E.k, @E.x, @E.m, @E.h, @E.r, @E.p, @E.q)
+        # pulse: (energy) ->
+        #     @pulsar.radius = @real.radius + abs(sin(@pulsing * 2)) * 500
+        #     # E = k(xmh/r^(p-q))
+        #     if floor(@pulsing * 100) % 5 is 0
+        #         @E = 
+        #             k: 100
+        #             x: 1
+        #             m: 1
+        #             h: @health
+        #             r: @pulsar.radius
+        #             p: 2
+        #             q: 0
+        #         @damage = energy.calc(@E.k, @E.x, @E.m, @E.h, @E.r, @E.p, @E.q)
         update: (map, energy) ->
             if @health > 0
                 # console.log @health
@@ -101,7 +101,7 @@ define [
                 @velocity = @velocity.scale(@friction)
                 @logic = @logic.add(@gravity).add(@velocity)
                 
-                @pulse(energy) if @pulsate and energy.E > energy.low
+                # @pulse(energy) if @pulsate and energy.E > energy.low
                 
                 # After future logic
                 if @collide(map)

@@ -10,6 +10,10 @@
         this.cap = 9000;
       }
 
+      Energy.prototype.check = function(k, x, m, h, r, p, q) {
+        return (k * x * m * h) / (pow(r, p - q));
+      };
+
       Energy.prototype.calc = function(k, x, m, h, r, p, q) {
         var total;
         total = (k * x * m * h) / (pow(r, p - q));

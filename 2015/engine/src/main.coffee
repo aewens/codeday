@@ -4,15 +4,10 @@ require.config
 require [
     "state",
     "gamestate",
+    "menustate",
     "input",
     "canvas"
-], (State, GameState, InputHandler, Canvas) ->
-    States = 
-        NO_CHANGE: 0
-        MENU: 1
-        GAME: 2
-        END: 3
-
+], (State, GameState, MenuState, InputHandler, Canvas) ->
     class Game
         constructor: ->
             @canvas = new Canvas 1080, 480
@@ -21,28 +16,36 @@ require [
                 left:     65
                 right:    68
                 pulse:    74
+                mana:     75
                 spacebar: 32
                 skip:     76
+                enter:    13
             
             @canvas.ctx.strokeStyle = "#fff"
             
+            @States = 
+                NO_CHANGE: 0
+                MENU: 1
+                GAME: 2
+                END: 3
+            
             @currentState = null
-            @nextState = States.GAME
+            @nextState = @States.MENU
             
             @ups = 1000/60
             @elapsed = 0
         run: ->
             self = @
             @canvas.animate (now) ->
-                if self.nextState isnt States.NO_CHANGE
+                if self.nextState isnt self.States.NO_CHANGE
                     switch self.nextState
-                        when States.MENU
-                            self.currentState = new State self
-                        when States.GAME
+                        when self.States.MENU
+                            self.currentState = new MenuState self
+                        when self.States.GAME
                             self.currentState = new GameState self
-                        when States.END
+                        when self.States.END
                             self.currentState = new State self
-                    self.nextState = States.NO_CHANGE
+                    self.nextState = self.States.NO_CHANGE
                 
                 self.currentState.handleInputs(self.input)
                 

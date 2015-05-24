@@ -3,15 +3,16 @@ define [
     "pappai",
     "vector",
     "player",
+    "skill",
     "ai",
     "block",
-    "map",
     "level",
     "energy",
     "universe"
-], (State, Pappai, Vector, Player, AI, Block, Map, Level, Energy, Universe) ->
+], (State, Pappai, Vector, Player, Skill, 
+    AI, Block, Level, Energy, Universe) ->
     class GameState extends State
-        constructor: (game) ->
+        constructor: (@game) ->
             super game
             
             @w = @game.canvas.ctx.width
@@ -35,8 +36,7 @@ define [
             return if @level.current + 1 is @level.max
             @map = @level.next()
             @energy.E = @energy.reset
-            @health = Pappai.Text().set(20, 20)
-            @atLevel = Pappai.Text().set(@map.w * @map.size - 20, 20)
+            @level.mana = @level.mreset
             @load()
         load: ->
             @ais = []
@@ -49,11 +49,15 @@ define [
                 ai = new AI(aix, aiy, 20, @mobs, "#f00")
                 @ais.push ai
                 
-            @player = new Player(60, @h - 200, 20, @mobs, "#00f")
+            @player = new Skill(60, @h - 200, 20, @mobs, "#00f")
+            @player.stats(100, 1, 1, 2, 0, 10)
             
-            @health = Pappai.Text().set(20, 20)
-            @atLevel = Pappai.Text().set(20, 40)
-            @enLeft = Pappai.Text().set(20, 60)
+            @health = Pappai.Text(10).set(20, 20)
+            @atLevel = Pappai.Text(10).set(20, 35)
+            @pEnergy = Pappai.Text(10).set(20, 50)
+            @pMana = Pappai.Text(10).set(20, 65)
+            @enLeft = Pappai.Text(10).set(20, 80)
+            @mnLeft = Pappai.Text(10).set(20, 95)
         handleInputs: (input) ->
             # if input.x != null and input.y != null
             #     @player.real.set(input.x, input.y)
@@ -64,7 +68,7 @@ define [
                 @player.move(1, 0)
             if input.isPressed("spacebar")
                 @player.move(0, -40) if @player.canJump
-            if input.isDown("pulse")
+            if input.isDown("pulse") and !input.isDown("mana")
                 unless @player.dead
                     @player.pulsate = true
                     @player.pulsing = @player.pulsing + 0.001
@@ -72,13 +76,21 @@ define [
                 @player.pulsate = false
                 @player.pulsing = 0
                 
+            if input.isDown("mana") and !input.isDown("pulse")
+                unless @player.dead
+                    @player.mpulsate = true
+                    @player.mpulsing = @player.mpulsing + 0.001
+            else
+                @player.mpulsate = false
+                @player.mpulsing = 0
+                
             if input.isPressed("skip") then @lvlup()
         update: ->
             @time = (@time + 1) % 10000
             @energy.update(@time)
             @universe.update(@time, @ais, @player)
             @map.update(@player)
-            @player.update(@map, @energy)
+            @player.update(@map, @energy, @level)
             for i in [0...@mobs]
                 continue if @ais[i].dead
                 others = []
@@ -95,9 +107,15 @@ define [
             if @player.pulsate and @energy.E > @energy.low
                 @player.pulsar.set(@player.logic.x, @player.logic.y)
                 @player.pulsar.render()
+            if @player.mpulsate
+                @player.mpulsar.set(@player.logic.x, @player.logic.y)
+                @player.mpulsar.render()
             life = floor(@player.health)
             life = if life > 0 then life else "Dead"
             @health.render("HP: " + life)
             @atLevel.render("Level: " + floor(@level.current + 1))
+            @pEnergy.render("E: " + floor(@player.energy(@energy)))
+            @pMana.render("M: " + floor(@player.M))
             @enLeft.render("Energy: " + floor(@energy.E))
+            @mnLeft.render("Mana: " + floor(@level.mana))
     return GameState

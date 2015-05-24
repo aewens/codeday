@@ -187,9 +187,9 @@
     CText = (function(_super) {
       __extends(CText, _super);
 
-      function CText(Pappai, font, size) {
-        this.give("font", font);
+      function CText(Pappai, size, font) {
         this.give("size", size);
+        this.give("font", font);
         CText.__super__.constructor.apply(this, arguments);
       }
 
@@ -258,8 +258,8 @@
       Square: function(side) {
         return new CSquare(this, side);
       },
-      Text: function(font, size) {
-        return new CText(this, font, size);
+      Text: function(size, font) {
+        return new CText(this, size, font);
       }
     };
     return Pappai;

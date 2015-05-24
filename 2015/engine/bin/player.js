@@ -96,22 +96,6 @@
         return this.collided;
       };
 
-      Player.prototype.pulse = function(energy) {
-        this.pulsar.radius = this.real.radius + abs(sin(this.pulsing)) * 500;
-        if (floor(this.pulsing * 100) % 5 === 0) {
-          this.E = {
-            k: 100,
-            x: 1,
-            m: 1,
-            h: this.health,
-            r: this.pulsar.radius,
-            p: 2,
-            q: 0
-          };
-          return this.damage = energy.calc(this.E.k, this.E.x, this.E.m, this.E.h, this.E.r, this.E.p, this.E.q);
-        }
-      };
-
       Player.prototype.update = function(map, energy) {
         var dir;
         if (this.health > 0) {
@@ -126,9 +110,6 @@
           }
           this.velocity = this.velocity.scale(this.friction);
           this.logic = this.logic.add(this.gravity).add(this.velocity);
-          if (this.pulsate && energy.E > energy.low) {
-            this.pulse(energy);
-          }
           if (this.collide(map)) {
             dir = this.into.logic.sub(this.logic).dot(this.gravity);
             if (dir >= 39) {

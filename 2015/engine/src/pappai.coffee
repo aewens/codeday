@@ -107,9 +107,9 @@ define ->
             @
             
     class CText extends CNode
-        constructor: (Pappai, font, size) ->
-            @give("font", font)
+        constructor: (Pappai, size, font) ->
             @give("size", size)
+            @give("font", font)
             super
         mid: (x, y) -> [x, y]
         render: (words) ->
@@ -157,6 +157,6 @@ define ->
         Circle: (radius) -> new CCircle(@, radius)
         Box: (width, height) -> new CBox(@, width, height)
         Square: (side) -> new CSquare(@, side)
-        Text: (font, size) -> new CText(@, font, size)
+        Text: (size, font) -> new CText(@, size, font)
             
     return Pappai

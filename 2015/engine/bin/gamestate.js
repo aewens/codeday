@@ -3,12 +3,13 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["state", "pappai", "vector", "player", "ai", "block", "map", "level", "energy", "universe"], function(State, Pappai, Vector, Player, AI, Block, Map, Level, Energy, Universe) {
+  define(["state", "pappai", "vector", "player", "skill", "ai", "block", "level", "energy", "universe"], function(State, Pappai, Vector, Player, Skill, AI, Block, Level, Energy, Universe) {
     var GameState;
     GameState = (function(_super) {
       __extends(GameState, _super);
 
       function GameState(game) {
+        this.game = game;
         GameState.__super__.constructor.call(this, game);
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
@@ -26,8 +27,7 @@
         }
         this.map = this.level.next();
         this.energy.E = this.energy.reset;
-        this.health = Pappai.Text().set(20, 20);
-        this.atLevel = Pappai.Text().set(this.map.w * this.map.size - 20, 20);
+        this.level.mana = this.level.mreset;
         return this.load();
       };
 
@@ -42,10 +42,14 @@
           ai = new AI(aix, aiy, 20, this.mobs, "#f00");
           this.ais.push(ai);
         }
-        this.player = new Player(60, this.h - 200, 20, this.mobs, "#00f");
-        this.health = Pappai.Text().set(20, 20);
-        this.atLevel = Pappai.Text().set(20, 40);
-        return this.enLeft = Pappai.Text().set(20, 60);
+        this.player = new Skill(60, this.h - 200, 20, this.mobs, "#00f");
+        this.player.stats(100, 1, 1, 2, 0, 10);
+        this.health = Pappai.Text(10).set(20, 20);
+        this.atLevel = Pappai.Text(10).set(20, 35);
+        this.pEnergy = Pappai.Text(10).set(20, 50);
+        this.pMana = Pappai.Text(10).set(20, 65);
+        this.enLeft = Pappai.Text(10).set(20, 80);
+        return this.mnLeft = Pappai.Text(10).set(20, 95);
       };
 
       GameState.prototype.handleInputs = function(input) {
@@ -60,7 +64,7 @@
             this.player.move(0, -40);
           }
         }
-        if (input.isDown("pulse")) {
+        if (input.isDown("pulse") && !input.isDown("mana")) {
           if (!this.player.dead) {
             this.player.pulsate = true;
             this.player.pulsing = this.player.pulsing + 0.001;
@@ -68,6 +72,15 @@
         } else {
           this.player.pulsate = false;
           this.player.pulsing = 0;
+        }
+        if (input.isDown("mana") && !input.isDown("pulse")) {
+          if (!this.player.dead) {
+            this.player.mpulsate = true;
+            this.player.mpulsing = this.player.mpulsing + 0.001;
+          }
+        } else {
+          this.player.mpulsate = false;
+          this.player.mpulsing = 0;
         }
         if (input.isPressed("skip")) {
           return this.lvlup();
@@ -80,7 +93,7 @@
         this.energy.update(this.time);
         this.universe.update(this.time, this.ais, this.player);
         this.map.update(this.player);
-        this.player.update(this.map, this.energy);
+        this.player.update(this.map, this.energy, this.level);
         for (i = _i = 0, _ref = this.mobs; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           if (this.ais[i].dead) {
             continue;
@@ -113,11 +126,18 @@
           this.player.pulsar.set(this.player.logic.x, this.player.logic.y);
           this.player.pulsar.render();
         }
+        if (this.player.mpulsate) {
+          this.player.mpulsar.set(this.player.logic.x, this.player.logic.y);
+          this.player.mpulsar.render();
+        }
         life = floor(this.player.health);
         life = life > 0 ? life : "Dead";
         this.health.render("HP: " + life);
         this.atLevel.render("Level: " + floor(this.level.current + 1));
-        return this.enLeft.render("Energy: " + floor(this.energy.E));
+        this.pEnergy.render("E: " + floor(this.player.energy(this.energy)));
+        this.pMana.render("M: " + floor(this.player.M));
+        this.enLeft.render("Energy: " + floor(this.energy.E));
+        return this.mnLeft.render("Mana: " + floor(this.level.mana));
       };
 
       return GameState;

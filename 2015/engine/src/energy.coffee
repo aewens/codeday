@@ -8,6 +8,8 @@ define [
             @low = 100
             @reset = 500
             @cap = 9000
+        check: (k, x, m, h, r, p, q) ->
+            (k * x * m * h) / (pow(r, p - q))
         calc: (k, x, m, h, r, p, q) ->
             total = (k * x * m * h) / (pow(r, p - q))
             @E = @E - total

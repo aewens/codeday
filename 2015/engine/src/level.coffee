@@ -35,6 +35,8 @@ define [
             @map = new Map(@w, @h, @size)
             @max = Levels.length
             @current = 0
+            @mana = 1000
+            @mreset = 1000
         start: ->
             @select(@current)
         select: (lvl) ->

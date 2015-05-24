@@ -4,14 +4,8 @@
     urlArgs: "nocache=" + (new Date).getTime()
   });
 
-  require(["state", "gamestate", "input", "canvas"], function(State, GameState, InputHandler, Canvas) {
-    var Game, States, game;
-    States = {
-      NO_CHANGE: 0,
-      MENU: 1,
-      GAME: 2,
-      END: 3
-    };
+  require(["state", "gamestate", "menustate", "input", "canvas"], function(State, GameState, MenuState, InputHandler, Canvas) {
+    var Game, game;
     Game = (function() {
       function Game() {
         this.canvas = new Canvas(1080, 480);
@@ -19,12 +13,20 @@
           left: 65,
           right: 68,
           pulse: 74,
+          mana: 75,
           spacebar: 32,
-          skip: 76
+          skip: 76,
+          enter: 13
         });
         this.canvas.ctx.strokeStyle = "#fff";
+        this.States = {
+          NO_CHANGE: 0,
+          MENU: 1,
+          GAME: 2,
+          END: 3
+        };
         this.currentState = null;
-        this.nextState = States.GAME;
+        this.nextState = this.States.MENU;
         this.ups = 1000 / 60;
         this.elapsed = 0;
       }
@@ -33,18 +35,18 @@
         var self;
         self = this;
         return this.canvas.animate(function(now) {
-          if (self.nextState !== States.NO_CHANGE) {
+          if (self.nextState !== self.States.NO_CHANGE) {
             switch (self.nextState) {
-              case States.MENU:
-                self.currentState = new State(self);
+              case self.States.MENU:
+                self.currentState = new MenuState(self);
                 break;
-              case States.GAME:
+              case self.States.GAME:
                 self.currentState = new GameState(self);
                 break;
-              case States.END:
+              case self.States.END:
                 self.currentState = new State(self);
             }
-            self.nextState = States.NO_CHANGE;
+            self.nextState = self.States.NO_CHANGE;
           }
           self.currentState.handleInputs(self.input);
           if (!self.last) {

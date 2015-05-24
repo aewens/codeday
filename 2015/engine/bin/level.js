@@ -11,6 +11,8 @@
         this.map = new Map(this.w, this.h, this.size);
         this.max = Levels.length;
         this.current = 0;
+        this.mana = 1000;
+        this.mreset = 1000;
       }
 
       Level.prototype.start = function() {
