@@ -86,6 +86,8 @@ define [
                 
             if input.isPressed("skip") then @lvlup()
         update: ->
+            @game.nextState = @game.States.END if @player.dead
+            
             @time = (@time + 1) % 10000
             @energy.update(@time)
             @universe.update(@time, @ais, @player)

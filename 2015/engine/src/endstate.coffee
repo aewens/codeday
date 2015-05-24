@@ -1,0 +1,32 @@
+define [
+    "state",
+    "pappai"
+], (State, Pappai) ->
+    class EndState extends State
+        constructor: (@game) ->
+            super game
+            
+            @w = @game.canvas.ctx.width
+            @h = @game.canvas.ctx.height
+            
+            @step = 0
+            
+            @title = Pappai.Text(50).set(300, 128)
+            @enter = Pappai.Text(16).set(440, 256)
+            @menu = Pappai.Text(16).set(435, 300)
+        handleInputs: (input) ->
+            if input.isPressed("enter")
+                @game.nextState = @game.States.GAME
+            if input.isPressed("spacebar")
+                @game.nextState = @game.States.MENU
+        update: ->
+        render: (ctx) ->
+            ctx.clear()
+            switch @step
+                when 0
+                    @title.render("You died. Ooops.")
+                    @enter.render("( press enter to enter )")
+                    @menu.render("( press space to menu )")
+                when 1
+                    console.log 0
+    return EndState

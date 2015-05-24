@@ -4,7 +4,7 @@
     urlArgs: "nocache=" + (new Date).getTime()
   });
 
-  require(["state", "gamestate", "menustate", "input", "canvas"], function(State, GameState, MenuState, InputHandler, Canvas) {
+  require(["state", "gamestate", "menustate", "endstate", "input", "canvas"], function(State, GameState, MenuState, EndState, InputHandler, Canvas) {
     var Game, game;
     Game = (function() {
       function Game() {
@@ -44,7 +44,7 @@
                 self.currentState = new GameState(self);
                 break;
               case self.States.END:
-                self.currentState = new State(self);
+                self.currentState = new EndState(self);
             }
             self.nextState = self.States.NO_CHANGE;
           }

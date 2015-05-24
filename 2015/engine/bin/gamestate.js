@@ -89,6 +89,9 @@
 
       GameState.prototype.update = function() {
         var i, j, others, _i, _j, _ref, _ref1;
+        if (this.player.dead) {
+          this.game.nextState = this.game.States.END;
+        }
         this.time = (this.time + 1) % 10000;
         this.energy.update(this.time);
         this.universe.update(this.time, this.ais, this.player);
