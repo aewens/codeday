@@ -13,16 +13,17 @@
         total = (k * x * m * h) / (pow(r, p - q));
         this.E = this.E - total;
         if (this.E < 0) {
-          return this.E = 0;
+          this.E = 0;
         }
+        return total;
       };
 
       Energy.prototype.update = function(time) {
         if (time % 5 === 0) {
           this.E = this.E + 20;
         }
-        if (this.E >= 1000) {
-          return this.E = 1000;
+        if (this.E >= 9000) {
+          return this.E = 9000;
         }
       };
 

@@ -10,8 +10,9 @@ define [
             total = (k * x * m * h) / (pow(r, p - q))
             @E = @E - total
             @E = 0 if @E < 0
+            total
         update: (time) ->
             @E = @E + 20 if time % 5 is 0
-            @E = 1000 if @E >= 1000
+            @E = 9000 if @E >= 9000
         
     return Energy

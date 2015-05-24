@@ -19,6 +19,8 @@ define [
             @friction = 0.9
             
             @canJump = false
+            @health = 10
+            @dead = false
         move: (x, y) ->
             @velocity = @velocity.add2(x, y)
         collide: (map, player, others) ->
@@ -45,58 +47,69 @@ define [
                 d2 < self.r
                 
             collided = false
-            for object in [player].concat(others).concat(map.world)
+            hit = false
+            everything = [player].concat(others).concat(map.world)
+            for object in everything
                 continue if collided
-                logic = object.logic
-                real = object.real
-                objx = real.x
-                objy = real.y
-                objs = real.side if real.side?
-                objr = real.radius if real.radius?
-                collided = if object.type
-                                ctc(logic, objr)
-                            else
-                                cts(objx, objy, objs)
-                @into = object if collided
+                if object instanceof Player and object.pulsate
+                    pulsar = new Vector(object.pulsar.x, object.pulsar.y)
+                    hit = ctc(pulsar, object.pulsar.radius)
+                else
+                    logic = object.logic
+                    real = object.real
+                    objx = real.x
+                    objy = real.y
+                    objs = real.side if real.side?
+                    objr = real.radius if real.radius?
+                    collided = if object.type
+                                    ctc(logic, objr)
+                                else
+                                    cts(objx, objy, objs)
+                    @into = object if collided
             @collided = collided
             if @into instanceof Player
                 player.health = player.health - 1 if player.health > 0
+            @health = @health - player.damage if hit and @health > 0
             # if @collided
             #     @real.fg("#ff0")
             # else
             #     @real.fg(@color)
             @collided
         update: (map, player, others) ->
-            attract = player.logic.sub(@logic)
-            
-            if attract.mag() < 250
-                lr = if attract.x > 0 then 1 else -1
-                ud = if attract.y < 0 and @canJump then -5 else 0
+            if @health > 0
+                @real.fg(@color) if @real.get("fcolor") != @color
                 
-                # Hack to fix underground bug
-                ud = if @logic.y >= map.h * map.size - @r * 2 then -20 else ud
-                
-                @velocity = @velocity.add2(lr, ud)
-            else
-                @velocity = new Vector(0, 0)
-            
-            @velocity = @velocity.scale(@friction)
-            @logic = @logic.add(@gravity).add(@velocity)
-            # After future logic
-            if @collide(map, player, others)
-                dir = @into.logic.sub(@logic).dot(@gravity)
-                if dir >= 35
-                    # gravity = new Vector(0, @velocity.y)
-                    @logic = @logic.sub(@gravity)
-                    @canJump = true
-                else if dir <= -35
-                    # Bottom
+                attract = player.logic.sub(@logic)
+                if attract.mag() < 250
+                    lr = if attract.x > 0 then 1 else -1
+                    ud = if attract.y < 0 and @canJump then -5 else 0
+                    
+                    # Hack to fix underground bug
+                    ud = if @logic.y >= map.h * map.size - @r * 2 then -20 else ud
+                    
+                    @velocity = @velocity.add2(lr, ud)
                 else
-                    @logic = @logic.sub(@velocity).sub(@gravity)
-            else
-                @canJump = false
+                    @velocity = new Vector(0, 0)
                 
-            @real.set(@logic.x, @logic.y)
+                @velocity = @velocity.scale(@friction)
+                @logic = @logic.add(@gravity).add(@velocity)
+                # After future logic
+                if @collide(map, player, others)
+                    dir = @into.logic.sub(@logic).dot(@gravity)
+                    if dir >= 35
+                        # gravity = new Vector(0, @velocity.y)
+                        @logic = @logic.sub(@gravity)
+                        @canJump = true
+                    else if dir <= -35
+                        # Bottom
+                    else
+                        @logic = @logic.sub(@velocity).sub(@gravity)
+                else
+                    @canJump = false
+                @real.set(@logic.x, @logic.y)
+            else
+                @dead = true
+                @real.fg("hsla(0, 0%, 0%, 0.5)")
         render: ->
             @real.render()
 

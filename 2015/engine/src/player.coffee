@@ -21,6 +21,7 @@ define [
             
             @canJump = false
             @health = 100
+            @damage = 0
             
             opts  =
                 fcolor: "hsla(180, 100%, 50%, 0.5)"
@@ -29,14 +30,7 @@ define [
             @pulsar = Pappai.Circle(@r + 5).flag(opts)
             @pulsate = false
             @pulsing = 0
-            @E = 
-                k: 1000
-                x: 1
-                m: 1
-                h: @health
-                r: @pulsar.radius
-                p: 2
-                q: 0
+            @
         move: (x, y) ->
             @velocity = @velocity.add2(x, y)
         collide: (map) ->
@@ -95,7 +89,7 @@ define [
                     r: @pulsar.radius
                     p: 2
                     q: 0
-                total = energy.calc(@E.k, @E.x, @E.m, @E.h, @E.r, @E.p, @E.q)
+                @damage = energy.calc(@E.k, @E.x, @E.m, @E.h, @E.r, @E.p, @E.q)
         update: (map, energy) ->
             # @pulsing = 0 if !pulsate
             @velocity = @velocity.scale(@friction)

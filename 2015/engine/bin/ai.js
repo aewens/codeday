@@ -20,6 +20,8 @@
         this.velocity = new Vector(0, 0);
         this.friction = 0.9;
         this.canJump = false;
+        this.health = 10;
+        this.dead = false;
       }
 
       AI.prototype.move = function(x, y) {
@@ -27,7 +29,7 @@
       };
 
       AI.prototype.collide = function(map, player, others) {
-        var collided, ctc, cts, h, logic, object, objr, objs, objx, objy, real, self, w, _i, _len, _ref;
+        var collided, ctc, cts, everything, h, hit, logic, object, objr, objs, objx, objy, pulsar, real, self, w, _i, _len;
         w = map.w * map.size;
         h = map.h * map.size;
         if (this.logic.x < this.r) {
@@ -56,25 +58,31 @@
           return d2 < self.r;
         };
         collided = false;
-        _ref = [player].concat(others).concat(map.world);
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          object = _ref[_i];
+        hit = false;
+        everything = [player].concat(others).concat(map.world);
+        for (_i = 0, _len = everything.length; _i < _len; _i++) {
+          object = everything[_i];
           if (collided) {
             continue;
           }
-          logic = object.logic;
-          real = object.real;
-          objx = real.x;
-          objy = real.y;
-          if (real.side != null) {
-            objs = real.side;
-          }
-          if (real.radius != null) {
-            objr = real.radius;
-          }
-          collided = object.type ? ctc(logic, objr) : cts(objx, objy, objs);
-          if (collided) {
-            this.into = object;
+          if (object instanceof Player && object.pulsate) {
+            pulsar = new Vector(object.pulsar.x, object.pulsar.y);
+            hit = ctc(pulsar, object.pulsar.radius);
+          } else {
+            logic = object.logic;
+            real = object.real;
+            objx = real.x;
+            objy = real.y;
+            if (real.side != null) {
+              objs = real.side;
+            }
+            if (real.radius != null) {
+              objr = real.radius;
+            }
+            collided = object.type ? ctc(logic, objr) : cts(objx, objy, objs);
+            if (collided) {
+              this.into = object;
+            }
           }
         }
         this.collided = collided;
@@ -83,36 +91,47 @@
             player.health = player.health - 1;
           }
         }
+        if (hit && this.health > 0) {
+          this.health = this.health - player.damage;
+        }
         return this.collided;
       };
 
       AI.prototype.update = function(map, player, others) {
         var attract, dir, lr, ud;
-        attract = player.logic.sub(this.logic);
-        if (attract.mag() < 250) {
-          lr = attract.x > 0 ? 1 : -1;
-          ud = attract.y < 0 && this.canJump ? -5 : 0;
-          ud = this.logic.y >= map.h * map.size - this.r * 2 ? -20 : ud;
-          this.velocity = this.velocity.add2(lr, ud);
-        } else {
-          this.velocity = new Vector(0, 0);
-        }
-        this.velocity = this.velocity.scale(this.friction);
-        this.logic = this.logic.add(this.gravity).add(this.velocity);
-        if (this.collide(map, player, others)) {
-          dir = this.into.logic.sub(this.logic).dot(this.gravity);
-          if (dir >= 35) {
-            this.logic = this.logic.sub(this.gravity);
-            this.canJump = true;
-          } else if (dir <= -35) {
-
-          } else {
-            this.logic = this.logic.sub(this.velocity).sub(this.gravity);
+        if (this.health > 0) {
+          if (this.real.get("fcolor") !== this.color) {
+            this.real.fg(this.color);
           }
+          attract = player.logic.sub(this.logic);
+          if (attract.mag() < 250) {
+            lr = attract.x > 0 ? 1 : -1;
+            ud = attract.y < 0 && this.canJump ? -5 : 0;
+            ud = this.logic.y >= map.h * map.size - this.r * 2 ? -20 : ud;
+            this.velocity = this.velocity.add2(lr, ud);
+          } else {
+            this.velocity = new Vector(0, 0);
+          }
+          this.velocity = this.velocity.scale(this.friction);
+          this.logic = this.logic.add(this.gravity).add(this.velocity);
+          if (this.collide(map, player, others)) {
+            dir = this.into.logic.sub(this.logic).dot(this.gravity);
+            if (dir >= 35) {
+              this.logic = this.logic.sub(this.gravity);
+              this.canJump = true;
+            } else if (dir <= -35) {
+
+            } else {
+              this.logic = this.logic.sub(this.velocity).sub(this.gravity);
+            }
+          } else {
+            this.canJump = false;
+          }
+          return this.real.set(this.logic.x, this.logic.y);
         } else {
-          this.canJump = false;
+          this.dead = true;
+          return this.real.fg("hsla(0, 0%, 0%, 0.5)");
         }
-        return this.real.set(this.logic.x, this.logic.y);
       };
 
       AI.prototype.render = function() {

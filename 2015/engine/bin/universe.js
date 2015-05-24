@@ -17,9 +17,7 @@
             snap = this.snapshots[object.name];
             object.logic = snap.pos;
             object.velocity = snap.vel;
-            if (object.E != null) {
-              object.E = snap.E;
-            }
+            object.health = snap.life;
           }
         }
         if (time % 256 === 0 || Object.keys(this.snapshots).length === 0) {
@@ -29,13 +27,10 @@
             object = everything[_j];
             snap = {
               pos: object.logic,
-              vel: object.velocity
+              vel: object.velocity,
+              life: object.health
             };
-            if (object.E != null) {
-              snap.E = object.E;
-            }
-            this.snapshots[object.name] = snap;
-            _results.push(console.log(snap));
+            _results.push(this.snapshots[object.name] = snap);
           }
           return _results;
         }

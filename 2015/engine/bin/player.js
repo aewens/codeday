@@ -23,6 +23,7 @@
         this.friction = 0.9;
         this.canJump = false;
         this.health = 100;
+        this.damage = 0;
         opts = {
           fcolor: "hsla(180, 100%, 50%, 0.5)",
           scolor: "hsl(200, 100%, 50%)",
@@ -31,15 +32,7 @@
         this.pulsar = Pappai.Circle(this.r + 5).flag(opts);
         this.pulsate = false;
         this.pulsing = 0;
-        this.E = {
-          k: 1000,
-          x: 1,
-          m: 1,
-          h: this.health,
-          r: this.pulsar.radius,
-          p: 2,
-          q: 0
-        };
+        this;
       }
 
       Player.prototype.move = function(x, y) {
@@ -102,7 +95,6 @@
       };
 
       Player.prototype.pulse = function(energy) {
-        var total;
         this.pulsar.radius = this.real.radius + abs(sin(this.pulsing)) * 500;
         if (floor(this.pulsing * 100) % 5 === 0) {
           this.E = {
@@ -114,7 +106,7 @@
             p: 2,
             q: 0
           };
-          return total = energy.calc(this.E.k, this.E.x, this.E.m, this.E.h, this.E.r, this.E.p, this.E.q);
+          return this.damage = energy.calc(this.E.k, this.E.x, this.E.m, this.E.h, this.E.r, this.E.p, this.E.q);
         }
       };
 

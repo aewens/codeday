@@ -14,20 +14,19 @@
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
         this.player = new Player(60, this.h - 200, 20, "#00f");
-        console.log(this.player.name);
         this.map = new Map(27, 12, 40);
         this.map.row(11, "platform");
         this.map.fromR(4, 7, 5, "platform");
+        this.map.fromR(16, 4, 5, "platform");
         this.time = 0;
         this.energy = new Energy();
         this.universe = new Universe(this.energy);
         this.ais = [];
-        this.a = 0;
+        this.a = 1;
         for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           aix = floor(random() * 800) + 100;
           aiy = floor(random() * 200);
           ai = new AI(aix, aiy, 20, "#f00");
-          console.log(ai.name);
           this.ais.push(ai);
         }
       }
