@@ -22,54 +22,56 @@
         return this.objects.push(object);
       };
 
-      Map.prototype.fill = function(x, y) {
-        var block, color;
-        color = "#" + floor(random() * 999);
-        block = new Block(x * this.size, y * this.size, this.size, color);
-        block.real.give("type", "block");
+      Map.prototype.fill = function(x, y, type) {
+        var block;
+        if (type === "void") {
+          return null;
+        }
+        block = new Block(x * this.size, y * this.size, this.size, "#000");
+        block.real.give("type", type);
         return block;
       };
 
-      Map.prototype.locate = function(key, block) {
-        return this.blocks[key] = block ? this.fill(key % this.width, Math.floor(key / this.w)) : null;
+      Map.prototype.locate = function(key, type) {
+        return this.blocks[key] = this.fill(key % this.width, Math.floor(key / this.w), type);
       };
 
-      Map.prototype.select = function(x, y, block) {
-        return this.blocks[x + y * this.w] = block ? this.fill(x, y) : null;
+      Map.prototype.select = function(x, y, type) {
+        return this.blocks[x + y * this.w] = this.fill(x, y, type);
       };
 
-      Map.prototype.row = function(r, block) {
+      Map.prototype.row = function(r, type) {
         var x, _i, _ref, _results;
         _results = [];
         for (x = _i = 0, _ref = this.w; 0 <= _ref ? _i < _ref : _i > _ref; x = 0 <= _ref ? ++_i : --_i) {
-          _results.push(this.blocks[x + r * this.w] = block ? this.fill(x, r) : null);
+          _results.push(this.blocks[x + r * this.w] = this.fill(x, r, type));
         }
         return _results;
       };
 
-      Map.prototype.col = function(c, block) {
+      Map.prototype.col = function(c, type) {
         var y, _i, _ref, _results;
         _results = [];
         for (y = _i = 0, _ref = this.h; 0 <= _ref ? _i < _ref : _i > _ref; y = 0 <= _ref ? ++_i : --_i) {
-          _results.push(this.blocks[c + y * this.w] = block ? this.fill(c, y) : null);
+          _results.push(this.blocks[c + y * this.w] = this.fill(c, y, type));
         }
         return _results;
       };
 
-      Map.prototype.fromR = function(x, y, to, block) {
+      Map.prototype.fromR = function(x, y, to, type) {
         var i, _i, _results;
         _results = [];
         for (i = _i = 0; 0 <= to ? _i < to : _i > to; i = 0 <= to ? ++_i : --_i) {
-          _results.push(this.blocks[(x + i) + y * this.w] = block ? this.fill(x + i, y) : null);
+          _results.push(this.blocks[(x + i) + y * this.w] = this.fill(x + i, y, type));
         }
         return _results;
       };
 
-      Map.prototype.fromD = function(x, y, to, block) {
+      Map.prototype.fromD = function(x, y, to, type) {
         var i, _i, _results;
         _results = [];
         for (i = _i = 0; 0 <= to ? _i < to : _i > to; i = 0 <= to ? ++_i : --_i) {
-          _results.push(this.blocks[x + (y + i) * this.w] = block ? this.fill(x, y + i) : null);
+          _results.push(this.blocks[x + (y + i) * this.w] = this.fill(x, y + i, type));
         }
         return _results;
       };
@@ -81,9 +83,7 @@
       };
 
       Map.prototype.update = function() {
-        var blocks;
-        blocks = this.getAll();
-        return this.world = this.objects.concat(blocks);
+        return this.world = this.getAll();
       };
 
       Map.prototype.render = function() {

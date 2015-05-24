@@ -12,32 +12,31 @@ define [
             @
         use: (object) ->
             @objects.push object
-        fill: (x, y) ->
-            color = "#" + floor(random() * 999)
-            block = new Block(x * @size, y * @size, @size, color)
-            block.real.give("type", "block")
+        fill: (x, y, type) ->
+            return null if type is "void"
+            block = new Block(x * @size, y * @size, @size, "#000")
+            block.real.give("type", type)
             block
-        locate: (key, block) ->
-            @blocks[key] = if block then @fill(key%@width,key//@w) else null
-        select: (x, y, block) ->
-            @blocks[x+y*@w] = if block then @fill(x, y) else null
-        row: (r, block) ->
+        locate: (key, type) ->
+            @blocks[key] = @fill(key%@width, key//@w, type)
+        select: (x, y, type) ->
+            @blocks[x+y*@w] = @fill(x, y, type)
+        row: (r, type) ->
             for x in [0...@w]
-                @blocks[x+r*@w] = if block then @fill(x, r) else null
-        col: (c, block) ->
+                @blocks[x+r*@w] = @fill(x, r, type)
+        col: (c, type) ->
             for y in [0...@h]
-                @blocks[c+y*@w] = if block then @fill(c, y) else null
-        fromR: (x, y, to, block) ->
+                @blocks[c+y*@w] = @fill(c, y, type)
+        fromR: (x, y, to, type) ->
             for i in [0...to]
-                @blocks[(x+i)+y*@w] = if block then @fill(x+i, y) else null
-        fromD: (x, y, to, block) ->
+                @blocks[(x+i)+y*@w] = @fill(x+i, y, type)
+        fromD: (x, y, to, type) ->
             for i in [0...to]
-                @blocks[x+(y+i)*@w] = if block then @fill(x, y+i) else null
+                @blocks[x+(y+i)*@w] = @fill(x, y+i, type)
         getAll: ->
             @blocks.filter (x) -> x != null
         update: ->
-            blocks = @getAll()
-            @world = @objects.concat(blocks)
+            @world = @getAll()
         render: ->
             blocks = @getAll()
             blocks[i].real.render() for i in [0...blocks.length]

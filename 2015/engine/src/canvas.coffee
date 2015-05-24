@@ -5,6 +5,7 @@ define [
         constructor: (width, height, fullscreen) ->
             ctx = Pappai.Init(width, height, fullscreen)
             @canvas = ctx.canvas
+            document.body.appendChild @canvas
             @ctx = ((ctx) ->
                 ctx.width = ctx.canvas.width
                 ctx.height = ctx.canvas.height
@@ -22,7 +23,7 @@ define [
                 ctx
             )(@canvas.getContext "2d")
             
-            document.body.appendChild @canvas
+            @
         animate: (leup) ->
             rf = (-> window.requestAnimationFrame)()
             self = @

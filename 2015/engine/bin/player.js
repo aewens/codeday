@@ -19,6 +19,7 @@
         this.gravity = new Vector(0, this.G);
         this.velocity = new Vector(0, 0);
         this.friction = 0.9;
+        this.canJump = false;
       }
 
       Player.prototype.move = function(x, y) {
@@ -52,7 +53,6 @@
           cy = clamp(self.logic.y, y, y + s);
           c = new Vector(cx, cy);
           d2 = ceil(self.logic.sub(c).mag());
-          console.log(d2, self.r);
           return d2 < self.r;
         };
         collided = false;
@@ -86,19 +86,22 @@
         return this.collided;
       };
 
-      Player.prototype.update = function(world) {
+      Player.prototype.update = function(map) {
         var dir;
         this.velocity = this.velocity.scale(this.friction);
         this.logic = this.logic.add(this.gravity).add(this.velocity);
-        if (this.collide(world)) {
+        if (this.collide(map)) {
           dir = this.into.logic.sub(this.logic).dot(this.gravity);
           if (dir >= 39) {
             this.logic = this.logic.sub(this.gravity);
+            this.canJump = true;
           } else if (dir <= -39) {
 
           } else {
 
           }
+        } else {
+          this.canJump = false;
         }
         return this.real.set(this.logic.x, this.logic.y);
       };

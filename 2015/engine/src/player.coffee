@@ -16,6 +16,8 @@ define [
             @gravity = new Vector(0, @G)
             @velocity = new Vector(0, 0)
             @friction = 0.9
+            
+            @canJump = false
         move: (x, y) ->
             @velocity = @velocity.add2(x, y)
         collide: (map) ->
@@ -39,7 +41,7 @@ define [
                 cy = clamp(self.logic.y, y, y + s)
                 c  = new Vector(cx, cy)
                 d2 = ceil(self.logic.sub(c).mag())
-                console.log d2, self.r
+                # console.log d2, self.r
                 d2 < self.r
                 
             collided = false
@@ -62,20 +64,23 @@ define [
             else
                 @real.fg(@color)
             @collided
-        update: (world) ->
+        update: (map) ->
             @velocity = @velocity.scale(@friction)
             @logic = @logic.add(@gravity).add(@velocity)
             # After future logic
-            if @collide(world)
+            if @collide(map)
                 dir = @into.logic.sub(@logic).dot(@gravity)
                 if dir >= 39
                     # gravity = new Vector(0, @velocity.y)
                     @logic = @logic.sub(@gravity)
+                    @canJump = true
                 else if dir <= -39
                     # Bottom
                 else
                     # Side
-                    
+            else
+                @canJump = false
+                
             @real.set(@logic.x, @logic.y)
         render: ->
             @real.render()

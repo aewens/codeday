@@ -10,12 +10,12 @@
 
       function GameState(game) {
         GameState.__super__.constructor.call(this, game);
-        this.w = this.game.canvas.ctx.width;
-        this.h = this.game.canvas.ctx.height;
+        this.w = this.game.ctx.width;
+        this.h = this.game.ctx.height;
         this.player = new Player(60, this.h - 200, 20, "#00f");
         this.map = new Map(16, 12, 40);
-        this.map.row(11, true);
-        this.map.fromR(5, 5, 5, true);
+        this.map.row(11, "platform");
+        this.map.fromR(4, 7, 5, "platform");
       }
 
       GameState.prototype.handleInputs = function(input) {
@@ -26,12 +26,14 @@
           this.player.move(1, 0);
         }
         if (input.isPressed("spacebar")) {
-          return this.player.move(0, -50);
+          if (this.player.canJump) {
+            return this.player.move(0, -40);
+          }
         }
       };
 
       GameState.prototype.update = function() {
-        this.map.update();
+        this.map.update(this.player);
         return this.player.update(this.map);
       };
 

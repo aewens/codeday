@@ -7,6 +7,7 @@
         var ctx;
         ctx = Pappai.Init(width, height, fullscreen);
         this.canvas = ctx.canvas;
+        document.body.appendChild(this.canvas);
         this.ctx = (function(ctx) {
           ctx.width = ctx.canvas.width;
           ctx.height = ctx.canvas.height;
@@ -26,7 +27,7 @@
           };
           return ctx;
         })(this.canvas.getContext("2d"));
-        document.body.appendChild(this.canvas);
+        this;
       }
 
       Canvas.prototype.animate = function(leup) {

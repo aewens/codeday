@@ -10,14 +10,14 @@ define [
         constructor: (game) ->
             super game
             
-            @w = @game.canvas.ctx.width
-            @h = @game.canvas.ctx.height
+            @w = @game.ctx.width
+            @h = @game.ctx.height
             
             @player = new Player(60, @h - 200, 20, "#00f")
             
             @map = new Map(16, 12, 40)
-            @map.row(11, true)
-            @map.fromR(5, 5, 5, true)
+            @map.row(11, "platform")
+            @map.fromR(4, 7, 5, "platform")
         handleInputs: (input) ->
             # if input.x != null and input.y != null
             #     @player.real.set(input.x, input.y)
@@ -27,9 +27,9 @@ define [
             if input.isDown("right")
                 @player.move(1, 0)
             if input.isPressed "spacebar"
-                @player.move(0, -50)
+                @player.move(0, -40) if @player.canJump
         update: ->
-            @map.update()
+            @map.update(@player)
             @player.update(@map)
         render: (ctx) ->
             ctx.clear()

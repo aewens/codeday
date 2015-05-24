@@ -14,7 +14,13 @@
     };
     Game = (function() {
       function Game() {
-        this.canvas = new Canvas(640, 480);
+        var mod;
+        this.game = new Canvas(640, 480);
+        this.canvas = this.game.canvas;
+        this.ctx = this.game.ctx;
+        mod = pow(2, 2);
+        this.ratio = [mod * 4, mod * 3];
+        this.unit = this.resize(this.ratio[0], this.ratio[1]);
         this.input = new InputHandler({
           left: 65,
           up: 87,
@@ -22,17 +28,54 @@
           down: 83,
           spacebar: 32
         });
-        this.canvas.ctx.strokeStyle = "#fff";
+        this.ctx.strokeStyle = "#fff";
         this.currentState = null;
         this.nextState = States.GAME;
         this.ups = 1000 / 60;
         this.elapsed = 0;
       }
 
+      Game.prototype.resize = function(r0, r1) {
+        var binr, h, hone, k, m0, m1, p, q, r, r2, s, unit, unit0, unit1, w, x, y;
+        w = parseInt(window.innerWidth);
+        h = parseInt(window.innerHeight);
+        r2 = r1 / r0;
+        binr = function(n) {
+          return pow(2, floor(log(n) / log(2)));
+        };
+        hone = function(a, b, c, r) {
+          if (a > c) {
+            if (b > c * r) {
+              return [c, c * r];
+            } else {
+              return hone(a, b, c * r, r);
+            }
+          } else {
+            return hone(a, b, c * r, r);
+          }
+        };
+        k = [(r0 > r1 ? w : h), (r0 > r1 ? h : w)];
+        q = binr(k[0]);
+        p = hone(k[0], k[1], q, r2);
+        x = p[(r0 > r1 ? 0 : 1)];
+        y = p[(r0 > r1 ? 1 : 0)];
+        r = min(r0, r1);
+        s = max(x, y);
+        unit0 = binr(floor(s / r));
+        unit1 = binr(floor(s / (r + 1)));
+        unit = (unit0 + unit1) / 2;
+        this.canvas.width = unit * r0;
+        this.canvas.height = unit * r1;
+        m0 = (h - this.canvas.height) / 2;
+        m1 = (w - this.canvas.width) / 2;
+        this.canvas.style.margin = "" + m0 + "px " + m1 + "px";
+        return unit;
+      };
+
       Game.prototype.run = function() {
         var self;
         self = this;
-        return this.canvas.animate(function(now) {
+        return this.game.animate(function(now) {
           if (self.nextState !== States.NO_CHANGE) {
             switch (self.nextState) {
               case States.MENU:
@@ -55,7 +98,7 @@
             self.last = now;
             self.currentState.update();
           }
-          return self.currentState.render(self.canvas.ctx);
+          return self.currentState.render(self.ctx);
         });
       };
 
