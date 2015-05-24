@@ -1,9 +1,11 @@
 define [
     "state", 
     "pappai",
+    "vector",
     "player",
-    "vector"
-], (State, Pappai, Player, Vector) ->
+    "block",
+    "map"
+], (State, Pappai, Vector, Player, Block, Map) ->
     class GameState extends State
         constructor: (game) ->
             super game
@@ -11,23 +13,26 @@ define [
             @w = @game.canvas.ctx.width
             @h = @game.canvas.ctx.height
             
-            @player = new Player(100, 100, 40, "#f00", true)
-            # @box = new Player(60, 60, 80, "#00f", false)
-            @follow = new Player(0, 0, 40, "#ff0", true)
-            @world = []
+            @player = new Player(60, @h - 200, 20, "#00f")
+            
+            @map = new Map(16, 12, 40)
+            @map.row(11, true)
+            @map.fromR(5, 5, 5, true)
         handleInputs: (input) ->
-            if input.x != null and input.y != null
-                @follow.real.set(input.x, input.y)
-                @follow.logic = new Vector(input.x, input.y)
+            # if input.x != null and input.y != null
+            #     @player.real.set(input.x, input.y)
+            #     @player.logic = new Vector(input.x, input.y)
+            if input.isDown("left")
+                @player.move(-1, 0)
+            if input.isDown("right")
+                @player.move(1, 0)
+            if input.isPressed "spacebar"
+                @player.move(0, -50)
         update: ->
-            @world = [
-                @player
-            ]
-            @follow.collide(@world)
+            @map.update()
+            @player.update(@map)
         render: (ctx) ->
             ctx.clear()
-            @follow.real.render()
-            # @box.real.render()
-            @player.real.render()
-            @follow.real.link(@player.real)
+            @player.render()
+            @map.render()
     return GameState

@@ -26,8 +26,8 @@ define [
         animate: (leup) ->
             rf = (-> window.requestAnimationFrame)()
             self = @
-            l = ->
-                leup()
+            l = (now) ->
+                leup(now)
                 rf l, self.canvas
             rf l, @canvas
 

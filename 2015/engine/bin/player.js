@@ -14,12 +14,35 @@
         this.real = this.Reecelet;
         this.logic = this.Ewensian;
         this.collided = false;
-        this;
+        this.into = null;
+        this.G = 5;
+        this.gravity = new Vector(0, this.G);
+        this.velocity = new Vector(0, 0);
+        this.friction = 0.9;
       }
 
-      Player.prototype.collide = function(world) {
-        var ctc, cts, logic, object, objr, objs, objx, objy, real, self, _i, _len, _results;
+      Player.prototype.move = function(x, y) {
+        return this.velocity = this.velocity.add2(x, y);
+      };
+
+      Player.prototype.collide = function(map) {
+        var collided, ctc, cts, h, logic, object, objr, objs, objx, objy, real, self, w, _i, _len, _ref;
+        w = map.w * map.size;
+        h = map.h * map.size;
+        if (this.logic.x < this.r) {
+          this.logic = new Vector(this.r, this.logic.y);
+        }
+        if (this.logic.x >= w - this.r) {
+          this.logic = new Vector(w - this.r - 1, this.logic.y);
+        }
+        if (this.logic.y < this.r) {
+          this.logic = new Vector(this.logic.x, this.r);
+        }
+        if (this.logic.y >= h - this.r) {
+          this.logic = new Vector(this.logic.x, h - this.r - 1);
+        }
         self = this;
+        logic = this.logic;
         ctc = function(c, r) {
           return self.r + r > c.sub(self.logic).mag();
         };
@@ -28,13 +51,17 @@
           cx = clamp(self.logic.x, x, x + s);
           cy = clamp(self.logic.y, y, y + s);
           c = new Vector(cx, cy);
-          d2 = self.logic.sub(c).mag();
-          console.log(d2);
+          d2 = ceil(self.logic.sub(c).mag());
+          console.log(d2, self.r);
           return d2 < self.r;
         };
-        _results = [];
-        for (_i = 0, _len = world.length; _i < _len; _i++) {
-          object = world[_i];
+        collided = false;
+        _ref = map.world;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          object = _ref[_i];
+          if (collided) {
+            continue;
+          }
           logic = object.logic;
           real = object.real;
           objx = real.x;
@@ -45,16 +72,39 @@
           if (real.radius != null) {
             objr = real.radius;
           }
-          this.collided = object.type ? ctc(logic, objr) : cts(objx, objy, objs);
-          if (this.collided) {
-            this.color = "#0f0";
-            _results.push(this.real.fg(this.color));
-          } else {
-            this.color = "#00f";
-            _results.push(this.real.fg(this.color));
+          collided = object.type ? ctc(logic, objr) : cts(objx, objy, objs);
+          if (collided) {
+            this.into = object;
           }
         }
-        return _results;
+        this.collided = collided;
+        if (this.collided) {
+          this.real.fg("#ff0");
+        } else {
+          this.real.fg(this.color);
+        }
+        return this.collided;
+      };
+
+      Player.prototype.update = function(world) {
+        var dir;
+        this.velocity = this.velocity.scale(this.friction);
+        this.logic = this.logic.add(this.gravity).add(this.velocity);
+        if (this.collide(world)) {
+          dir = this.into.logic.sub(this.logic).dot(this.gravity);
+          if (dir >= 39) {
+            this.logic = this.logic.sub(this.gravity);
+          } else if (dir <= -39) {
+
+          } else {
+
+          }
+        }
+        return this.real.set(this.logic.x, this.logic.y);
+      };
+
+      Player.prototype.render = function() {
+        return this.real.render();
       };
 
       return Player;

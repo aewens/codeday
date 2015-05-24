@@ -25,12 +25,14 @@
         this.canvas.ctx.strokeStyle = "#fff";
         this.currentState = null;
         this.nextState = States.GAME;
+        this.ups = 1000 / 60;
+        this.elapsed = 0;
       }
 
       Game.prototype.run = function() {
         var self;
         self = this;
-        return this.canvas.animate(function() {
+        return this.canvas.animate(function(now) {
           if (self.nextState !== States.NO_CHANGE) {
             switch (self.nextState) {
               case States.MENU:
@@ -45,7 +47,14 @@
             self.nextState = States.NO_CHANGE;
           }
           self.currentState.handleInputs(self.input);
-          self.currentState.update();
+          if (!self.last) {
+            self.last = now;
+          }
+          self.elapsed = now - self.last;
+          if (self.elapsed > self.ups) {
+            self.last = now;
+            self.currentState.update();
+          }
           return self.currentState.render(self.canvas.ctx);
         });
       };

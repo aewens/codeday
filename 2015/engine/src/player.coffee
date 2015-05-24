@@ -10,35 +10,74 @@ define [
             @real  = @Reecelet
             @logic = @Ewensian
             @collided = false
-            @
-        collide: (world) ->
-            # world is a list of vectors
+            @into = null
+            
+            @G = 5
+            @gravity = new Vector(0, @G)
+            @velocity = new Vector(0, 0)
+            @friction = 0.9
+        move: (x, y) ->
+            @velocity = @velocity.add2(x, y)
+        collide: (map) ->
+            w = map.w * map.size
+            h = map.h * map.size
+            if @logic.x < @r
+                @logic = new Vector(@r, @logic.y)
+            if @logic.x >= w - @r
+                @logic = new Vector(w - @r - 1, @logic.y)
+            if @logic.y < @r
+                @logic = new Vector(@logic.x, @r)
+            if @logic.y >= h - @r
+                @logic = new Vector(@logic.x, h - @r - 1)    
+            
             self = @
+            logic = @logic
             ctc = (c, r) ->
                 self.r + r > c.sub(self.logic).mag()
             cts = (x, y, s) ->
                 cx = clamp(self.logic.x, x, x + s)
                 cy = clamp(self.logic.y, y, y + s)
                 c  = new Vector(cx, cy)
-                d2 = self.logic.sub(c).mag()
-                console.log d2
+                d2 = ceil(self.logic.sub(c).mag())
+                console.log d2, self.r
                 d2 < self.r
-            for object in world
+                
+            collided = false
+            for object in map.world
+                continue if collided
                 logic = object.logic
                 real = object.real
                 objx = real.x
                 objy = real.y
                 objs = real.side if real.side?
                 objr = real.radius if real.radius?
-                @collided = if object.type
+                collided = if object.type
                                 ctc(logic, objr)
                             else
                                 cts(objx, objy, objs)
-                if @collided
-                    @color = "#0f0"
-                    @real.fg(@color)
+                @into = object if collided
+            @collided = collided
+            if @collided
+                @real.fg("#ff0")
+            else
+                @real.fg(@color)
+            @collided
+        update: (world) ->
+            @velocity = @velocity.scale(@friction)
+            @logic = @logic.add(@gravity).add(@velocity)
+            # After future logic
+            if @collide(world)
+                dir = @into.logic.sub(@logic).dot(@gravity)
+                if dir >= 39
+                    # gravity = new Vector(0, @velocity.y)
+                    @logic = @logic.sub(@gravity)
+                else if dir <= -39
+                    # Bottom
                 else
-                    @color = "#00f"
-                    @real.fg(@color)
+                    # Side
+                    
+            @real.set(@logic.x, @logic.y)
+        render: ->
+            @real.render()
 
     return Player

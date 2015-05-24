@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["state", "pappai", "player", "vector"], function(State, Pappai, Player, Vector) {
+  define(["state", "pappai", "vector", "player", "block", "map"], function(State, Pappai, Vector, Player, Block, Map) {
     var GameState;
     GameState = (function(_super) {
       __extends(GameState, _super);
@@ -12,28 +12,33 @@
         GameState.__super__.constructor.call(this, game);
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
-        this.player = new Player(100, 100, 40, "#f00", true);
-        this.follow = new Player(0, 0, 40, "#ff0", true);
-        this.world = [];
+        this.player = new Player(60, this.h - 200, 20, "#00f");
+        this.map = new Map(16, 12, 40);
+        this.map.row(11, true);
+        this.map.fromR(5, 5, 5, true);
       }
 
       GameState.prototype.handleInputs = function(input) {
-        if (input.x !== null && input.y !== null) {
-          this.follow.real.set(input.x, input.y);
-          return this.follow.logic = new Vector(input.x, input.y);
+        if (input.isDown("left")) {
+          this.player.move(-1, 0);
+        }
+        if (input.isDown("right")) {
+          this.player.move(1, 0);
+        }
+        if (input.isPressed("spacebar")) {
+          return this.player.move(0, -50);
         }
       };
 
       GameState.prototype.update = function() {
-        this.world = [this.player];
-        return this.follow.collide(this.world);
+        this.map.update();
+        return this.player.update(this.map);
       };
 
       GameState.prototype.render = function(ctx) {
         ctx.clear();
-        this.follow.real.render();
-        this.player.real.render();
-        return this.follow.real.link(this.player.real);
+        this.player.render();
+        return this.map.render();
       };
 
       return GameState;

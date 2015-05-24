@@ -2,6 +2,7 @@ window.random = Math.random
 window.round  = Math.round
 window.floor  = Math.floor
 window.atan2  = Math.atan2
+window.ceil   = Math.ceil
 window.atan   = Math.atan
 window.asin   = Math.asin
 window.acos   = Math.acos

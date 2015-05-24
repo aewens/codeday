@@ -35,8 +35,8 @@
           return window.requestAnimationFrame;
         })();
         self = this;
-        l = function() {
-          leup();
+        l = function(now) {
+          leup(now);
           return rf(l, self.canvas);
         };
         return rf(l, this.canvas);
