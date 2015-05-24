@@ -12,13 +12,15 @@ define [
             @collided = false
             @into = null
             
+            @name = random().toString(36).substr(2, 8)
+            
             @G = 5
             @gravity = new Vector(0, @G)
             @velocity = new Vector(0, 0)
             @friction = 0.9
             
             @canJump = false
-            @health = 1000
+            @health = 100
             
             opts  =
                 fcolor: "hsla(180, 100%, 50%, 0.5)"
@@ -27,6 +29,14 @@ define [
             @pulsar = Pappai.Circle(@r + 5).flag(opts)
             @pulsate = false
             @pulsing = 0
+            @E = 
+                k: 1000
+                x: 1
+                m: 1
+                h: @health
+                r: @pulsar.radius
+                p: 2
+                q: 0
         move: (x, y) ->
             @velocity = @velocity.add2(x, y)
         collide: (map) ->
@@ -73,14 +83,26 @@ define [
             # else
             #     @real.fg(@color)
             @collided
-        pulse: ->
+        pulse: (energy) ->
             @pulsar.radius = @real.radius + abs(sin(@pulsing)) * 500
-            @pulsar.set(@logic.x, @logic.y)
-            @pulsar.render()
-        update: (map) ->
+            # E = k(xmh/r^(p-q))
+            if floor(@pulsing * 100) % 5 is 0
+                @E = 
+                    k: 100
+                    x: 1
+                    m: 1
+                    h: @health
+                    r: @pulsar.radius
+                    p: 2
+                    q: 0
+                total = energy.calc(@E.k, @E.x, @E.m, @E.h, @E.r, @E.p, @E.q)
+        update: (map, energy) ->
             # @pulsing = 0 if !pulsate
             @velocity = @velocity.scale(@friction)
             @logic = @logic.add(@gravity).add(@velocity)
+            
+            @pulse(energy) if @pulsate and energy.E > energy.reset
+            
             # After future logic
             if @collide(map)
                 dir = @into.logic.sub(@logic).dot(@gravity)

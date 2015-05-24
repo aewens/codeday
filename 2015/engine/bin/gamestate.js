@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["state", "pappai", "vector", "player", "ai", "block", "map"], function(State, Pappai, Vector, Player, AI, Block, Map) {
+  define(["state", "pappai", "vector", "player", "ai", "block", "map", "energy", "universe"], function(State, Pappai, Vector, Player, AI, Block, Map, Energy, Universe) {
     var GameState;
     GameState = (function(_super) {
       __extends(GameState, _super);
@@ -14,16 +14,20 @@
         this.w = this.game.canvas.ctx.width;
         this.h = this.game.canvas.ctx.height;
         this.player = new Player(60, this.h - 200, 20, "#00f");
+        console.log(this.player.name);
         this.map = new Map(27, 12, 40);
         this.map.row(11, "platform");
         this.map.fromR(4, 7, 5, "platform");
         this.time = 0;
+        this.energy = new Energy();
+        this.universe = new Universe(this.energy);
         this.ais = [];
         this.a = 0;
         for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           aix = floor(random() * 800) + 100;
           aiy = floor(random() * 200);
           ai = new AI(aix, aiy, 20, "#f00");
+          console.log(ai.name);
           this.ais.push(ai);
         }
       }
@@ -45,17 +49,18 @@
           return this.player.pulsing = this.player.pulsing + 0.001;
         } else {
           this.player.pulsate = false;
-          this.player.pulsing = 0;
-          return this.time = 0;
+          return this.player.pulsing = 0;
         }
       };
 
       GameState.prototype.update = function() {
         var i, j, others, _i, _j, _ref, _ref1, _results;
-        console.log(abs(sin(this.player.pulsing)) * 500);
         if (this.player.health > 0) {
+          this.time = (this.time + 1) % 10000;
+          this.energy.update(this.time);
+          this.universe.update(this.time, this.ais, this.player);
           this.map.update(this.player);
-          this.player.update(this.map);
+          this.player.update(this.map, this.energy);
           _results = [];
           for (i = _i = 0, _ref = this.a; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
             others = [];
@@ -80,8 +85,9 @@
           this.ais[i].render();
         }
         this.map.render();
-        if (this.player.pulsate) {
-          return this.player.pulse();
+        if (this.player.pulsate && this.energy.E > this.energy.reset) {
+          this.player.pulsar.set(this.player.logic.x, this.player.logic.y);
+          return this.player.pulsar.render();
         }
       };
 

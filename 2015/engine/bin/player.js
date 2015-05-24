@@ -16,12 +16,13 @@
         this.logic = this.Ewensian;
         this.collided = false;
         this.into = null;
+        this.name = random().toString(36).substr(2, 8);
         this.G = 5;
         this.gravity = new Vector(0, this.G);
         this.velocity = new Vector(0, 0);
         this.friction = 0.9;
         this.canJump = false;
-        this.health = 1000;
+        this.health = 100;
         opts = {
           fcolor: "hsla(180, 100%, 50%, 0.5)",
           scolor: "hsl(200, 100%, 50%)",
@@ -30,6 +31,15 @@
         this.pulsar = Pappai.Circle(this.r + 5).flag(opts);
         this.pulsate = false;
         this.pulsing = 0;
+        this.E = {
+          k: 1000,
+          x: 1,
+          m: 1,
+          h: this.health,
+          r: this.pulsar.radius,
+          p: 2,
+          q: 0
+        };
       }
 
       Player.prototype.move = function(x, y) {
@@ -91,16 +101,30 @@
         return this.collided;
       };
 
-      Player.prototype.pulse = function() {
+      Player.prototype.pulse = function(energy) {
+        var total;
         this.pulsar.radius = this.real.radius + abs(sin(this.pulsing)) * 500;
-        this.pulsar.set(this.logic.x, this.logic.y);
-        return this.pulsar.render();
+        if (floor(this.pulsing * 100) % 5 === 0) {
+          this.E = {
+            k: 100,
+            x: 1,
+            m: 1,
+            h: this.health,
+            r: this.pulsar.radius,
+            p: 2,
+            q: 0
+          };
+          return total = energy.calc(this.E.k, this.E.x, this.E.m, this.E.h, this.E.r, this.E.p, this.E.q);
+        }
       };
 
-      Player.prototype.update = function(map) {
+      Player.prototype.update = function(map, energy) {
         var dir;
         this.velocity = this.velocity.scale(this.friction);
         this.logic = this.logic.add(this.gravity).add(this.velocity);
+        if (this.pulsate && energy.E > energy.reset) {
+          this.pulse(energy);
+        }
         if (this.collide(map)) {
           dir = this.into.logic.sub(this.logic).dot(this.gravity);
           if (dir >= 39) {

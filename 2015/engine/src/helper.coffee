@@ -15,6 +15,7 @@ window.max    = Math.max
 window.min    = Math.min
 window.pow    = Math.pow
 window.tau    = Math.PI * 2
+window.exp    = Math.exp
 window.pi     = Math.PI
 window.ln     = Math.log
 window.E      = Math.E

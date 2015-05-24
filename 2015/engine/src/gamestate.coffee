@@ -5,8 +5,10 @@ define [
     "player",
     "ai",
     "block",
-    "map"
-], (State, Pappai, Vector, Player, AI, Block, Map) ->
+    "map",
+    "energy",
+    "universe"
+], (State, Pappai, Vector, Player, AI, Block, Map, Energy, Universe) ->
     class GameState extends State
         constructor: (game) ->
             super game
@@ -15,12 +17,16 @@ define [
             @h = @game.canvas.ctx.height
             
             @player = new Player(60, @h - 200, 20, "#00f")
+            console.log @player.name
             
             @map = new Map(27, 12, 40)
             @map.row(11, "platform")
             @map.fromR(4, 7, 5, "platform")
             
             @time = 0
+            
+            @energy = new Energy()
+            @universe = new Universe(@energy)
             
             @ais = []
             @a = 0
@@ -29,6 +35,7 @@ define [
                 aix = floor(random() * 800) + 100
                 aiy = floor(random() * 200)
                 ai = new AI(aix, aiy, 20, "#f00")
+                console.log ai.name
                 @ais.push ai
         handleInputs: (input) ->
             # if input.x != null and input.y != null
@@ -48,12 +55,14 @@ define [
             else
                 @player.pulsate = false
                 @player.pulsing = 0
-                @time = 0
         update: ->
-            console.log abs(sin(@player.pulsing)) * 500
+            # console.log @energy.E
             if @player.health > 0
+                @time = (@time + 1) % 10000
+                @energy.update(@time)
+                @universe.update(@time, @ais, @player)
                 @map.update(@player)
-                @player.update(@map)
+                @player.update(@map, @energy)
                 for i in [0...@a]
                     others = []
                     for j in [0...@a]
@@ -66,5 +75,7 @@ define [
             @player.render()
             @ais[i].render() for i in [0...@a]
             @map.render()
-            @player.pulse() if @player.pulsate
+            if @player.pulsate and @energy.E > @energy.reset
+                @player.pulsar.set(@player.logic.x, @player.logic.y)
+                @player.pulsar.render()
     return GameState
